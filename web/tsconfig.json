@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "CommonJS",
+        "isolatedModules": true,
+        "noImplicitAny": true,
+        "strict": true,
+        "baseUrl": "src",
+        "paths": {
+            "@/*": [
+                "./*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*",
+        "shims-vue.d.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
