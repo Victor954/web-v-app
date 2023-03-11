@@ -1,20 +1,60 @@
-<script lang="ts" setup>
-import { useTestStore } from '@/store/test.store';
-import { storeToRefs } from 'pinia';
-
-const store = useTestStore();
-
-const { name } = storeToRefs(store);
-const { setName } = store;
-</script>
-
 <template>
-    <h3>{{ name }}</h3>
-    <button class="btn btn-primary" @click="setName('name')">click me</button>
+    <section class="people_manager">
+        <section class="people_manager__title">
+            <Title icon="group" title="Список лиц"></Title>
+        </section>
+        <section class="people_manager__body">
+            <div class="card border-light shadow-sm">
+                <div class="card-body d-flex gap-5">
+                    <section class="people-manager__filter">
+
+                    </section>
+                    <section class="people-manager__list">
+                        <List></List>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </section>
 </template>
 
-<script lang="ts">
-export default {
+<script lang="ts" setup>
+import { onMounted } from 'vue'
 
-}
+import List from './List.vue';
+import Title from '@/assert/pages/header/Title.vue';
+
+import { usePeopleStore } from '@/store/people.store';
+
+const { fetchPeople } = usePeopleStore();
+
+onMounted(() => {
+    fetchPeople();
+})
 </script>
+
+<style scoped lang="sass">
+
+    .people_manager {
+        margin:3rem;
+        .people_manager__body {
+
+
+            .people-manager__filter {
+                width: 25%;
+                margin: calc($card-spacer-x * -1 - 1px);
+                background-color: lighten($gray-200, 3);
+                border-top-left-radius: $card-border-radius;
+                border-bottom-left-radius: $card-border-radius;
+            }
+
+            .people-manager__list {
+                width: 75%;
+            }
+        }
+    }
+    .line {
+        width: 1px;
+        background-color: var(--bs-card-border-color);
+    }
+</style>

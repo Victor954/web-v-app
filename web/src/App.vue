@@ -1,15 +1,14 @@
-<script lang="ts" setup>
-import MainVue from './pages/Main.vue';
-</script>
-
 <template>
-    <Main></Main>
+    <main>
+        <nav>
+            <RouterLink to="/">link1</RouterLink>
+        </nav>
+        <section>
+            <RouterView />
+        </section>
+    </main>
 </template>
 
-<script lang="ts">
-export default {
-    components: {
-        'Main': MainVue
-    }
-}
+<script lang="ts" setup>
+import { RouterLink, RouterView } from 'vue-router';
 </script>

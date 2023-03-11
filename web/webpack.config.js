@@ -22,7 +22,10 @@ module.exports = (arg , env) => ({
             {
                 test: /\.ts$/,
                 exclude: /node_modules/,
-                loader: "ts-loader"
+                loader: "ts-loader",
+                options: {
+                    appendTsSuffixTo: [/\.vue$/],
+                },
             },
             {
                 test: /\.vue$/,
@@ -37,19 +40,29 @@ module.exports = (arg , env) => ({
             {
                 test: /\.s[ac]ss$/i,
                 use: [
-                    env.mode === 'development' 
-                    ? 'vue-style-loader' 
-                    : { 
+                    env.mode === 'development' ? {
+                        loader: 'vue-style-loader',
+                    } : { 
                         loader:MiniCssExtractPlugin.loader,  
-                        options: {esModule: false}
+                        options: {
+                            esModule: false
+                        }
                     },
                     'css-loader',
-                    'sass-loader'
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            additionalData: `
+                                @import 'bootstrap/scss/functions.scss';
+                                @import 'bootstrap/scss/_variables.scss';
+                            `
+                        }
+                    }
                 ]
             }
         ]
     },
-    devtool: 'eval-source-map',
+    devtool: 'source-map',
     devServer: {
         static: {
           directory: path.join(__dirname, 'public'),
