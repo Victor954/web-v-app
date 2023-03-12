@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { FormExpose } from '@/domain/client/people/edit.types';
+import { FormExpose } from '../types';
 import { defineExpose, ref } from 'vue';
 
 import FormModify from '../body/FormModify.vue';

@@ -14,7 +14,7 @@
 </template>
 <script lang="ts" setup>
 
-import { BodyExpose } from '@/domain/client/people/edit.types';
+import { BodyExpose } from './types';
 
 import { ref, inject } from 'vue'
 import ModalTemplate from '@/assert/modal/ModalTemplate.vue';

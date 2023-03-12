@@ -14,7 +14,8 @@ module.exports = (arg , env) => ({
     resolve: {
         extensions: ['.js', '.json', '.ts' ,'.vue'],
         alias: {
-            '@': path.resolve(__dirname , 'src')
+            '@': path.resolve(__dirname , 'src'),
+            '@public': path.resolve(__dirname , 'public')
         }
     },
     module: {
@@ -59,6 +60,10 @@ module.exports = (arg , env) => ({
                         }
                     }
                 ]
+            },
+            {
+                test: /\.(jpg|png|svg|gif)$/,
+                type: 'asset/resource',
             }
         ]
     },
@@ -67,6 +72,7 @@ module.exports = (arg , env) => ({
         static: {
           directory: path.join(__dirname, 'public'),
         },
+        historyApiFallback: true,
         compress: true,
         hot: true,
         port: 3000,

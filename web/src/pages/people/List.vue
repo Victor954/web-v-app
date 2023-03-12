@@ -54,7 +54,7 @@ import { usePeopleStore } from '@/store/people.store';
 import MaterialIcon from '@/assert/icons/MaterialIcon.vue';
 import Modal from '@/assert/modal/Modal.vue';
 
-import Pagination from '@/components/Pagination.vue';
+import { Pagination } from '@/assert/pagination';
 import ModifyInsertModal from './modals/modifyInsert/ModifyInsertModal.vue';
 
 const modalRef = ref<typeof Modal>();

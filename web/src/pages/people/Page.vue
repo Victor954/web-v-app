@@ -1,5 +1,5 @@
 <template>
-    <section class="people_manager">
+    <section class="people_manager page">
         <section class="people_manager__title">
             <Title icon="group" title="Список лиц"></Title>
         </section>
@@ -30,13 +30,13 @@ const { fetchPeople } = usePeopleStore();
 
 onMounted(() => {
     fetchPeople();
-})
+});
+
 </script>
 
 <style scoped lang="sass">
 
     .people_manager {
-        margin:3rem;
         .people_manager__body {
 
 
