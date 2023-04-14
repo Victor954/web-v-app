@@ -40,7 +40,7 @@
                 </table>
             </section>
             <footer class="people_list__footer">
-                <Pagination />
+                <Pagination :total-items-count="200" :page-items-count="10" />
             </footer>
         </div>
     </article>

@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "strict": true,
+        "useUnknownInCatchVariables": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./*"
+            ]
+        },
+        "types": [
+            "./environment.d.ts",
+            "./test/settings/environment.test.d.ts",
+            "jest"
+        ]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

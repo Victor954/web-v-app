@@ -19,7 +19,7 @@
                 <AuthorizePage />
             </template>
             <template #loading>
-                <h3>loading</h3>
+                <h3>Loading</h3>
             </template>
         </AuthorizeView>
     </main>
@@ -28,9 +28,9 @@
 <script lang="ts" setup>
 import { Transition } from 'vue';
 import { RouterView } from 'vue-router';
+
 import { Menu } from '@/components/menu';
 import AuthorizePage from '@/pages/authorize/Page.vue';
-
 import { AuthorizeView } from '@/helpers/identity';
 
 </script>

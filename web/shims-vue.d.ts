@@ -4,5 +4,3 @@ declare module '*.vue' {
     const cm:DefineComponent<{} , {} , any>
     export default cm;
 }
-
-declare module '*.jpg';

@@ -1,7 +1,3 @@
-<script lang="ts" setup>
-import Icon from '@/assert/icons/MaterialIcon.vue'
-</script>
-
 <template>
     <nav class="navigation">
         <ul class="pagination">
@@ -10,21 +6,9 @@ import Icon from '@/assert/icons/MaterialIcon.vue'
                     <Icon size="md" icon="arrow_right_alt" class="arrow-left" />
                 </a>
             </li>
-            <li class="page-item">
-                <a class="page-link active" href="#">1</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">2</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">3</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">4</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">5</a>
-            </li>
+            <PageNumber number="1" @click-page="clickPageLinkHandler" />
+            <PageNumber v-for="page in pages" :number="page" @click-page="clickPageLinkHandler" />
+            <PageNumber :number="countPages.toString()" @click-page="clickPageLinkHandler" />
             <li class="page-item">
                 <a class="page-link" href="#">
                     <Icon size="md" icon="arrow_right_alt" />
@@ -33,51 +17,49 @@ import Icon from '@/assert/icons/MaterialIcon.vue'
         </ul>
     </nav>
 </template>
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
+import _ from 'lodash';
+
+import Icon from '@/assert/icons/MaterialIcon.vue'
+import PageNumber from './PageNumber.vue';
+
+type Props = {
+    totalItemsCount: number,
+    pageItemsCount: number
+}
+
+const paginationLength = 6;
+
+const props = defineProps<Props>();
+
+const indexRange = ref<number>(1);
+const countPages = computed(() => Math.ceil(props.totalItemsCount / props.pageItemsCount))
+
+const pages = computed(() => _.range(indexRange.value, indexRange.value + paginationLength).map(n => n.toString()));
+
+function clickPageLinkHandler(page: number) {
+
+    let indexRangeValue = 1;
+
+    if (page > 3) {
+        indexRangeValue = page - 2;
+    }
+
+    if (indexRangeValue > countPages.value - paginationLength) {
+        indexRangeValue = countPages.value - paginationLength + 1;
+    }
+
+    indexRange.value = indexRangeValue;
+}
+
+</script>
 <style scoped lang="sass">
     .navigation {
         height: auto;
 
        .pagination {
             margin: 0px;
-
-            .page-item {
-                $spaceOutside: 1.5rem;
-                $space: .5rem;
-
-                &:first-of-type {
-                    margin-right: $spaceOutside;
-                }
-                &:last-of-type {
-                    margin-left: $spaceOutside;
-                }
-                margin: 0rem $space;
-                .page-link {
-                    font-weight: 500;
-                    font-size: $font-size-sm;
-                    border-style:none;
-                    color: $gray-500;
-                    background-color: initial;
-                    
-                    .arrow-left {
-                        transform: rotate(180deg);
-                    }
-
-                    &:focus {
-                        box-shadow: none;
-                    }
-
-                    &:hover{
-                        background-color: initial;
-                        color: $gray-800;
-                    }
-                }
-                .page-link.active {
-                    @extend .page-link;
-
-                    color: $blue-300;
-                    border-bottom: solid 2px $blue-300;
-                }
-            }
         }
     }
 </style>
