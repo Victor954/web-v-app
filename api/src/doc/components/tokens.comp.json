@@ -1,0 +1,19 @@
+{
+    "RefreshTokens": {
+        "type": "object",
+        "properties": {
+            "login": {
+                "type": "string",
+                "example": "user"
+            },
+            "refreshToken": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InNhbWVMb2dpbiIsInJvbGVzIjpbXSwiaWF0IjoxNjgwMzc0MTc1LCJleHAiOjE2ODAzNzQ0NzV9.S_CADujT1Ldgz4AUdPWAeeuVmADLuKKOJl7yjaPp0v8"
+            },
+            "accessToken": {
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InNhbWVMb2dpbiIsInJvbGVzIjpbXSwiaWF0IjoxNjgwMzg1OTUxLCJleHAiOjE2ODA5OTA3NTF9.6Zm87-CIZNifMWxrASkmW9cFI3Ad2Iu-st6IAfNC8Ng"
+            }
+        }
+    }
+}

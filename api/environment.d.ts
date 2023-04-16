@@ -1,9 +1,7 @@
-import { Express } from 'express';
-
+/* eslint-disable no-var */
 declare global {
 
     var __MONGO_URI__: string;
-    var app: Express;
 
     namespace NodeJS {
       interface ProcessEnv {
@@ -29,4 +27,4 @@ declare global {
     }
 }
 
-export {}
+export {};

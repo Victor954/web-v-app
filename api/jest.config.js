@@ -1,10 +1,10 @@
 module.exports = {
-    preset: "./test/app-preset.js",
-    maxWorkers: '50%',
-    setupFilesAfterEnv: [
-        '<rootDir>/test/setup.ts'
-    ],
-    moduleNameMapper: {
-        "^@/(.*)": "<rootDir>/$1"
-    }
-}
+	preset: './src/test/app-preset.js',
+	maxWorkers: '50%',
+	setupFilesAfterEnv: [
+		'<rootDir>/src/test/setup.ts'
+	],
+	moduleNameMapper: {
+		'^@/(.*)': '<rootDir>/src/$1'
+	}
+};

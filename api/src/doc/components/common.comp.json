@@ -1,0 +1,15 @@
+{
+    "ServerError": {
+        "type": "object",
+        "properties": {
+            "code": {
+                "type": "string",
+                "example": "server_error"
+            },
+            "message": {
+                "type": "string",
+                "example": "Ошибка сервера"
+            }
+        }
+    }
+}

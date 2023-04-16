@@ -1,0 +1,52 @@
+{
+    "/tokens/refresh": {
+        "post": {
+            "tags": [
+                "tokens"
+            ],
+            "summary": "Обновить токен доступа",
+            "requestBody": {
+                "description": "Схема для обновления токенов",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/RefreshTokens"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Обновленные токены",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Tokens"
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "description": "Обработанная ошибка",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServerError"
+                            }
+                        }
+                    }
+                },
+                "500": {
+                    "description": "Необработанная ошибка",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServerError"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

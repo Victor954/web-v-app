@@ -10,12 +10,12 @@
         "baseUrl": ".",
         "paths": {
             "@/*": [
-                "./*"
+                "./src/*"
             ]
         },
         "types": [
             "./environment.d.ts",
-            "./test/settings/environment.test.d.ts",
+            "./src/test/settings/environment.test.d.ts",
             "jest"
         ]
     },
