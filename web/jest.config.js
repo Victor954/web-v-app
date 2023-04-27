@@ -1,20 +1,14 @@
+import presets from 'ts-jest/presets/index.js';
 
-/**
- * @type {import('jest').Config}
- */
-const config = {
+export default {
+    watchman: false,
     testEnvironment: 'jsdom',
-    maxWorkers: '50%',
     testEnvironmentOptions: {
         customExportConditions: ["node", "node-addons"],
     },
-    preset: 'ts-jest',
-    moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1',
-    },
+    moduleFileExtensions: ["js", "ts", "json", "vue"],
     transform: {
-        "^.+\\.vue$": "@vue/vue3-jest"
+      "^.+\\.vue$": "@vue/vue3-jest",
+      ...presets.defaults.transform
     }
 }
-
-module.exports = config;

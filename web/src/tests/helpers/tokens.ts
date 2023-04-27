@@ -1,0 +1,3 @@
+export default {
+    accessTokenWithUser: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibG9naW4iOiJKb2huIERvZSIsInJvbGVzIjpbXSwiaWF0IjoxNTE2MjM5MDIyfQ.ki6HTdW9q1FVC1M_LeXPeJqoGq-GqBLFhMsVkve9UlI'
+} 

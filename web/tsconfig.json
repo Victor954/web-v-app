@@ -1,33 +1,35 @@
 {
-    "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "jsx": "preserve",
-        "moduleResolution": "node",
-        "sourceMap": true,
-        "allowSyntheticDefaultImports": true,
-        "noImplicitAny": false,
-        "esModuleInterop": true,
-        "isolatedModules": true,
-        "strict": true,
-        "baseUrl": ".",
-        "paths": {
-            "@/*": [
-                "src/*"
-            ],
-            "@public/*": [
-                "public/*"
-            ]
-        }
-    },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.vue",
-        "shims-vue.d.ts",
-        "global.d.ts",
-        "node_modules/@types"
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": [
+      "ESNext",
+      "DOM"
     ],
-    "exclude": [
-        "node_modules"
-    ]
+    "types": [
+      "jsdom",
+      "jest",
+      "./environment.d.ts"
+    ],
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

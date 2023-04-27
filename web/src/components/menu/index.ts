@@ -1,1 +1,0 @@
-export { Navbar as Menu } from './navbar';
