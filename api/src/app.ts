@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import passport from 'passport';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './doc';
@@ -10,6 +11,12 @@ import bearerStrategy from './middleware/bearerStrategy.middleware';
 
 export function createExpress() {
 	const app = express();
+
+	const corsMiddleware = cors({
+		origin: 'http://127.0.0.1:5173'
+	});
+
+	app.use(corsMiddleware);
 
 	passport.use(bearerStrategy);
 	app.use(express.json());

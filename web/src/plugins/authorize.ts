@@ -25,10 +25,8 @@ export default function (router: Router): Plugin{
 */
 function registerOutUser(router: Router , authorizeStore: ReturnType<typeof useAuthorizeStore>) {
     authorizeStore.$subscribe((mutation , state) => {
-        if(mutation.storeId === 'authorize') {
-            if(state.user === null) {
-                router.push('/login');
-            }
+        if(mutation.storeId === 'authorize' && state.query.data === null) {
+            router.push('/login');
         }
     });
 }

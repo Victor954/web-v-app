@@ -3,16 +3,27 @@ import { createApp } from 'vue'
 import './style.css';
 
 import App from './App.vue'
-import { createPinia , createAuthorize , createRouter } from './plugins';
+import { 
+    createPinia , 
+    createAuthorize , 
+    createRouter , 
+     createAssertsUI
+} from './plugins';
 
 const app = createApp(App);
 
 const store = createPinia();
 const router = createRouter();
 const authorize = createAuthorize(router);
+const assertsUI = createAssertsUI();
 
-app.use(store);
-app.use(router);
-app.use(authorize);
+[
+    store,
+    router, 
+    authorize, 
+    assertsUI
+].forEach((plugin) => {
+    app.use(plugin);
+});
 
 app.mount('#app');

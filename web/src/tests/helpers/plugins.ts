@@ -1,12 +1,16 @@
-import { Pinia } from 'pinia';
-import { createPinia , createAuthorize , createRouter } from '../../plugins';
 import { Router } from 'vue-router';
+import { createPinia , createAuthorize , createRouter , createAssertsUI} from '../../plugins';
 import { Plugin } from 'vue';
 
-export function createPlugins() : [Pinia , Router , Plugin]{
+export function createPlugins() : [Plugin , Router , ...Plugin[]]{
     const store = createPinia();
     const router = createRouter();
     const authorize = createAuthorize(router);
-
-    return [store , router , authorize];
+    const assertsUI = createAssertsUI();
+    return [
+        store, 
+        router, 
+        authorize, 
+        assertsUI
+    ];
 }

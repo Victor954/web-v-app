@@ -5,13 +5,12 @@
     </article>
 </template>
 <script setup lang="ts">
-import { FeatherIconNames } from 'feather-icons';
-
 import Icon from '../Icon.vue';
+import { MaterialIcon } from 'material-icons';
 
 type Props = {
     label: string;
-    icon: FeatherIconNames
+    icon: MaterialIcon
 }
 
 defineProps<Props>();

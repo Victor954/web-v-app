@@ -2,17 +2,56 @@ import { defineStore } from 'pinia';
 import { api } from '../api';
 import { Tokens, User } from '../types/authorize.res.types';
 import jwtDecode from "jwt-decode";
-import { ref } from 'vue';
+import { ref , Ref, readonly , computed} from 'vue';
+import { LoadError, LoadState } from '@/types/store/asyncState.types';
+import { AxiosRequestConfig } from 'axios';
+import { LoginReq } from '@/types/request/authorize.req.types';
 
 type Nullable<T> = {
     [P in keyof T]: T[P] | null;
 };
 
+function useFetchAsync<TResponse>() {
+
+    const data = ref<TResponse | null>(null) as Ref<TResponse | null>;
+    const error = ref<LoadError>(null);
+    const state = ref<LoadState>('initialized');
+    
+    async function fetchAsync(apiConfig: AxiosRequestConfig): Promise<TResponse | null> {
+        try {
+            state.value = 'pending';
+            const { data: responseData } = await api.request<TResponse>(apiConfig);
+            data.value = responseData;
+            state.value = 'fulfilled';
+
+            return responseData;
+        } catch (err) {
+            error.value = err as Error;
+            state.value = 'rejected';
+            return null;
+        }
+    }
+
+    function setData(recoveredData: TResponse) {
+        data.value = recoveredData;
+    }
+
+    return {
+        data: readonly(data),
+        error: readonly(error),
+        state: readonly(state),
+        fetchAsync,
+        setData
+    }
+}
+
 export const useAuthorizeStore = defineStore('authorize', () => {
-    const user = ref<User | null>(null);
-    const error = ref<Error | null>(null);
-    const accessToken = ref<string | null>(null);
-    const refreshToken = ref<string | null>(null);
+
+    const tokensQuery = useFetchAsync<Tokens>();
+
+    const accessToken = computed(() => tokensQuery.data.value?.accessToken);
+    const refreshToken = computed(() => tokensQuery.data.value?.refreshToken);
+    const user = computed(() =>  accessToken.value ? jwtDecode(accessToken.value) as User : null);
 
     /**
     * Ставим креды из кеша при запуске
@@ -21,58 +60,52 @@ export const useAuthorizeStore = defineStore('authorize', () => {
         const refreshToken = localStorage.getItem('refreshToken');
         const accessToken = localStorage.getItem('accessToken');
 
-        setTokens({refreshToken , accessToken});
+        if(refreshToken && accessToken) {
+            tokensQuery.setData({refreshToken , accessToken});
+        }
     }
 
-    async function fetchLogin(loginData: { login:string , password: string }) {
-        try {
-            const tokens = await api.post<Tokens>('/authorize/login' , loginData).then((response) => response.data);
+    async function fetchLogin(loginData: LoginReq) {
 
-            setTokens(tokens);
-        } catch (err) {
-            error.value = err as Error;
-        }
+        await tokensQuery.fetchAsync({
+            method: 'POST',
+            url: 'authorize/login',
+            data: loginData
+        });
 
+        cacheTokens();
     }
 
     async function fetchRefreshToken() {
         if(accessToken.value && refreshToken.value && user.value !== null) {
             
-            try {
-                const tokens = await api.post<Tokens>('/tokens/refresh' , {
-                    accessToken: accessToken.value,
-                    refreshToken: refreshToken.value
-                }).then((response) => response.data);
+            const result = await tokensQuery.fetchAsync({
+                method: 'POST',
+                url: '/tokens/refresh',
+                data: tokensQuery.data
+            });
 
-                setTokens(tokens);
+            if(!result) return false;
 
-                return { accessToken: accessToken.value , refreshToken: refreshToken.value }
-
-            } catch(err) {
-                error.value = err as Error;
-            }
+            cacheTokens();
+            return result;
         }
 
         return false;
     }
   
-    function setTokens(tokens: Nullable<Tokens>) {
-        if(tokens.refreshToken && tokens.accessToken) {
-            accessToken.value  = tokens.accessToken;
-            refreshToken.value = tokens.refreshToken;
-
-            localStorage.setItem('accessToken' , tokens.accessToken);
-            localStorage.setItem('refreshToken' , tokens.refreshToken);    
-
-            user.value = jwtDecode(tokens.accessToken );
+    function cacheTokens() {
+        if(refreshToken.value && accessToken.value) {
+            localStorage.setItem('accessToken' , accessToken.value);
+            localStorage.setItem('refreshToken' , refreshToken.value);    
         }
     }
 
     return { 
         user: user, 
-        error: error ,
         accessToken: accessToken,
         refreshToken: refreshToken,
+        query: tokensQuery,
         fetchLogin,
         fetchRefreshToken,
         recoveryCachedUser
