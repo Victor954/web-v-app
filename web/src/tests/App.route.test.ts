@@ -40,7 +40,7 @@ describe('testing Routing' , () => {
         await expectRoute('/' , '/' , 1);
     });
 
-    test('testing /administration path with user' , async () => {
+    test('testing /management path with user' , async () => {
         
         localStorageMock.setLocalStore({
             accessToken: tokens.accessTokenWithUser,
@@ -53,12 +53,12 @@ describe('testing Routing' , () => {
             }     
         });
 
-        router.push('/administration');
+        router.push('/management');
 
         await router.isReady();
 
         await expect(push).toBeCalledTimes(2);
-        await expect(push).lastCalledWith('/administration/login');
+        await expect(push).lastCalledWith('/management/login');
     });
 });
 

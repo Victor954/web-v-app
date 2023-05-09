@@ -5,7 +5,7 @@
 </template>
 <script setup lang="ts">
 import { reactive, provide, readonly, onBeforeMount, onUnmounted } from 'vue';
-import { FormStateModel, FormValidationModel, FormControl } from './types';
+import { FormStateModel, FormValidationModel, FormControl, FromRef } from './types';
 import EventBus from '@/helpers/EventBus';
 
 type Props = {
@@ -88,6 +88,15 @@ function validFiled(name: string, value: string) {
     return isInvalid;
 }
 
+function setErrors(errorMsg: string, fieldsName?: string[]) {
+
+    Object.keys(formStateModel)
+        .filter(fieldName => fieldsName ? fieldsName.includes(fieldName) : true)
+        .forEach(fieldName => {
+            formStateModel[fieldName] = ['error', errorMsg];
+        });
+}
+
 provide('formValidationModel', formValidationModel);
 provide('formModel', readonly(fromModel));
 provide('formStateModel', readonly(formStateModel));
@@ -95,4 +104,9 @@ provide('formStateModel', readonly(formStateModel));
 provide<FormControl>('formControl', readonly({
     change: changeFormModel
 }));
+
+defineExpose<FromRef>({
+    validForm,
+    setErrors
+});
 </script>

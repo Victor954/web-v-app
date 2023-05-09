@@ -7,23 +7,23 @@
                 </section>
                 <section class="row justify-content-center">
                     <div class="col-3">
-                        <Form class="d-flex flex-column gap-2">
+                        <Form class="d-flex flex-column gap-2" ref="formRef" @submit-form="submitHandler">
                             <Validate :rules="[rules.required, rules.alphanumeric, rules.length(3, 20)]">
                                 <FormLabel>Логин</FormLabel>
-                                <Input name="login" type="text" placeholder="Ввелите логин" />
+                                <Input name="login" type="text" placeholder="Ввелите логин" :disabled="disabledForm" />
                             </Validate>
                             <Validate :rules="[rules.required, rules.alphanumeric, rules.length(6, 35), equalsPasswords]"
-                                :bindFields="['repeatPassword']">
+                                :bindFields="['repeatedPassword']">
                                 <FormLabel>Пароль</FormLabel>
-                                <PasswordInput name="password" />
+                                <PasswordInput name="password" :disabled="disabledForm" />
                             </Validate>
                             <Validate :rules="[rules.required, rules.alphanumeric, rules.length(6, 35), equalsPasswords]"
                                 :bindFields="['password']">
                                 <FormLabel>Повторите пароль</FormLabel>
-                                <PasswordInput name="repeatPassword" />
+                                <PasswordInput name="repeatedPassword" :disabled="disabledForm" />
                             </Validate>
                             <div class="d-flex align-items-center mt-3 gap-3">
-                                <Button type="submit" style-type="primary">
+                                <Button type="submit" style-type="primary" :disabled="disabledForm">
                                     Регистрация
                                 </Button>
                                 <RouterLink to="/login">
@@ -46,8 +46,20 @@ import { Validation } from '@/components/form/validation/types';
 const equalsPasswords: Validation = [
     (str: string, formState) => validator.equals(
         formState['password'],
-        formState['repeatPassword']
+        formState['repeatedPassword']
     ),
     'Пароли должны совпадать'
 ];
+
+import { useFetchForm } from '@/helpers/authorize';
+import { RegisterReq } from '@/types/request/authorize.req.types';
+
+const {
+    disabledForm,
+    formRef,
+    submitHandler
+} = useFetchForm<RegisterReq>({
+    successRedirect: '/',
+    fetchAsync: (formModel, store) => store.fetchRegister(formModel)
+});
 </script>

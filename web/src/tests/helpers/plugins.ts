@@ -7,6 +7,7 @@ export function createPlugins() : [Plugin , Router , ...Plugin[]]{
     const router = createRouter();
     const authorize = createAuthorize(router);
     const assertsUI = createAssertsUI();
+
     return [
         store, 
         router, 

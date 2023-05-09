@@ -15,7 +15,7 @@
         },
         "types": [
             "./environment.d.ts",
-            "./src/test/settings/environment.test.d.ts",
+            "./environment.test.d.ts",
             "jest"
         ]
     },

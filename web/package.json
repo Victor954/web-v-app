@@ -15,6 +15,7 @@
     "bootstrap": "^5.2.3",
     "immer": "^10.0.1",
     "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "material-icons": "^1.13.6",
     "pinia": "^2.0.34",
     "validator": "^13.9.0",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.21.4",
     "@types/jest": "^29.5.0",
+    "@types/lodash": "^4.14.194",
     "@types/validator": "^13.7.15",
     "@vitejs/plugin-vue": "^4.1.0",
     "@vue/test-utils": "^2.3.2",

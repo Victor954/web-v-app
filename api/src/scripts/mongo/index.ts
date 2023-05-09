@@ -1,27 +1,34 @@
 import logger from '@/scripts/logger/console.log';
-import ModelsContext from './ModelsContext';
 import mongoose from 'mongoose';
 
-let mongo!: typeof mongoose;
-export let db!:ModelsContext;
+let mongo: typeof mongoose | null = null;
 
 export async function connectAsync() {
 
 	try {
 		mongo = await mongoose.connect(process.env.MONGO_URL);
-		db = new ModelsContext();
-        
 	} catch(err) {
-		logger.error((err as Error).message);
+		logError(err);
 	}
 }
 
-
 export async function closeAsync() {
-
 	try {
-		await mongo.connection.close();
+		await mongo?.connection.close();
 	} catch(err) {
-		logger.error((err as Error).message);
+		logError(err);
+	}
+}
+
+export default {
+	connectAsync,
+	closeAsync
+};
+
+function logError(err: Error | any) {
+	if(err instanceof Error) {
+		logger.error(err.message);
+	} else {
+		logger.error(err);
 	}
 }

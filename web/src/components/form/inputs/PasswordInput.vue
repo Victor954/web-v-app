@@ -1,7 +1,8 @@
 <template>
     <div :class="['input-group', validClass]">
-        <Input :name="name" :type="inputType" class="border-end-0 form-control-password" placeholder="Введите пароль" />
-        <button type="button" @mousedown="swapType(false)" @mouseup="swapType(true)"
+        <Input :name="name" :type="inputType" class="border-end-0 form-control-password" placeholder="Введите пароль"
+            v-bind="attrs" />
+        <button type="button" @mousedown="swapType(false)" @mouseup="swapType(true)" :disabled="(attrs.disabled as boolean)"
             :class="['input-group-text bg-white', visiblyButtonClass]">
             <Icon :icon="icon" class="text-muted" />
         </button>
@@ -9,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, useAttrs } from 'vue';
 import Icon from '@/components/Icon.vue';
 import Input from './Input.vue';
 import { useValidation } from './helpers/hooks';
@@ -19,6 +20,8 @@ type Props = {
 }
 
 const props = defineProps<Props>();
+
+const attrs = useAttrs();
 
 const { validClass } = useValidation({ name: props.name });
 const isTypePassword = ref(true);
@@ -71,5 +74,9 @@ function swapType(isPassword: boolean) {
 
 .input-group>.form-control-password:focus+.input-group-text {
     border-color: #86b7fe;
+}
+
+.input-group>button:disabled {
+    background-color: #e9ecef !important;
 }
 </style>

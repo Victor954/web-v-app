@@ -16,7 +16,8 @@ declare global {
 
     namespace Express {
       interface User {
-        roles?: string[]
+        login: string;
+        roles?: string[];
       }
     }
 

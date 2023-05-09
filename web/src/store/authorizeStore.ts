@@ -1,57 +1,24 @@
 import { defineStore } from 'pinia'; 
-import { api } from '../api';
-import { Tokens, User } from '../types/authorize.res.types';
+import { User } from '../types/authorize.res.types';
 import jwtDecode from "jwt-decode";
-import { ref , Ref, readonly , computed} from 'vue';
-import { LoadError, LoadState } from '@/types/store/asyncState.types';
-import { AxiosRequestConfig } from 'axios';
-import { LoginReq } from '@/types/request/authorize.req.types';
-
-type Nullable<T> = {
-    [P in keyof T]: T[P] | null;
-};
-
-function useFetchAsync<TResponse>() {
-
-    const data = ref<TResponse | null>(null) as Ref<TResponse | null>;
-    const error = ref<LoadError>(null);
-    const state = ref<LoadState>('initialized');
-    
-    async function fetchAsync(apiConfig: AxiosRequestConfig): Promise<TResponse | null> {
-        try {
-            state.value = 'pending';
-            const { data: responseData } = await api.request<TResponse>(apiConfig);
-            data.value = responseData;
-            state.value = 'fulfilled';
-
-            return responseData;
-        } catch (err) {
-            error.value = err as Error;
-            state.value = 'rejected';
-            return null;
-        }
-    }
-
-    function setData(recoveredData: TResponse) {
-        data.value = recoveredData;
-    }
-
-    return {
-        data: readonly(data),
-        error: readonly(error),
-        state: readonly(state),
-        fetchAsync,
-        setData
-    }
-}
+import { computed} from 'vue';
+import { LoginReq, RegisterReq } from '@/types/request/authorize.req.types';
+import { useFetchTokens } from './queries/authorizeStore';
+import { mapQueryResult } from '@/helpers/store';
 
 export const useAuthorizeStore = defineStore('authorize', () => {
-
-    const tokensQuery = useFetchAsync<Tokens>();
-
-    const accessToken = computed(() => tokensQuery.data.value?.accessToken);
-    const refreshToken = computed(() => tokensQuery.data.value?.refreshToken);
+    const tokensQuery = useFetchTokens();
+    
+    const accessToken = computed(() => tokensQuery.data?.accessToken);
+    const refreshToken = computed(() => tokensQuery.data?.refreshToken);
     const user = computed(() =>  accessToken.value ? jwtDecode(accessToken.value) as User : null);
+
+    tokensQuery.$subscribe((mutation , state) => {
+        if(mutation.storeId === 'queryTokens' && state.data) {
+            localStorage.setItem('accessToken' , state.data.accessToken);
+            localStorage.setItem('refreshToken' , state.data.refreshToken);    
+        }
+    });
 
     /**
     * Ставим креды из кеша при запуске
@@ -64,7 +31,7 @@ export const useAuthorizeStore = defineStore('authorize', () => {
             tokensQuery.setData({refreshToken , accessToken});
         }
     }
-
+    
     async function fetchLogin(loginData: LoginReq) {
 
         await tokensQuery.fetchAsync({
@@ -72,8 +39,24 @@ export const useAuthorizeStore = defineStore('authorize', () => {
             url: 'authorize/login',
             data: loginData
         });
+    }
 
-        cacheTokens();
+    async function fetchManagementLogin(loginData: LoginReq) {
+
+        await tokensQuery.fetchAsync({
+            method: 'POST',
+            url: 'management/authorize/login',
+            data: loginData
+        });
+    }
+
+    async function fetchRegister(registerData: RegisterReq) {
+
+        await tokensQuery.fetchAsync({
+            method: 'POST',
+            url: 'authorize/register',
+            data: registerData
+        });
     }
 
     async function fetchRefreshToken() {
@@ -87,26 +70,20 @@ export const useAuthorizeStore = defineStore('authorize', () => {
 
             if(!result) return false;
 
-            cacheTokens();
             return result;
         }
 
         return false;
-    }
-  
-    function cacheTokens() {
-        if(refreshToken.value && accessToken.value) {
-            localStorage.setItem('accessToken' , accessToken.value);
-            localStorage.setItem('refreshToken' , refreshToken.value);    
-        }
     }
 
     return { 
         user: user, 
         accessToken: accessToken,
         refreshToken: refreshToken,
-        query: tokensQuery,
+        query: mapQueryResult(tokensQuery) ,
         fetchLogin,
+        fetchManagementLogin,
+        fetchRegister,
         fetchRefreshToken,
         recoveryCachedUser
     }

@@ -5,13 +5,13 @@ const routes = [
     { path: '/login' , component: () => import('@/routes/home/authorize/Login.vue') },
     { path: '/register' , component: () => import('@/routes/home/authorize/Register.vue') },
     { 
-        path: '/administration', 
-        component: () => import('@/routes/administration/Administration.vue'),
-        meta: { private: true , roles: ['admin'], redirectPath: '/administration/login' },
+        path: '/management', 
+        component: () => import('@/routes/management/Administration.vue'),
+        meta: { private: true , roles: ['admin'], redirectPath: '/management/login' },
     },
     {
-        path: '/administration/login' , 
-        component: () => import('@/routes/administration/authorize/Login.vue')
+        path: '/management/login' , 
+        component: () => import('@/routes/management/authorize/Login.vue')
     }
 ]
 

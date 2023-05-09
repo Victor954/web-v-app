@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { bookTypeSchema } from '@/domain/schemas/book.schemas';
+import { bookTypeSchema } from '@/scripts/joi/schemas/book.schemas';
 import bodyValidate from '@/middleware/bodyValidate.middleware';
 
 import * as bookTypesService from '@/services/bookTypes.service';

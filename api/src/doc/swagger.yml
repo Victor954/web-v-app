@@ -1,0 +1,220 @@
+openapi: "3.0.2"
+info:
+  title: "API project"
+  description: "API для petproject"
+  version: "1.0.0"
+servers:
+  - url: http://localhost:5000/api/v1
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Tokens:
+      type: "object"
+      properties:
+        refreshToken:
+          type: "string"
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InNhbWVMb2dpbiIsInJvbGVzIjpbXSwiaWF0IjoxNjgwMzc0MTc1LCJleHAiOjE2ODAzNzQ0NzV9.S_CADujT1Ldgz4AUdPWAeeuVmADLuKKOJl7yjaPp0v8"
+        accessToken:
+          type: "string"
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6InNhbWVMb2dpbiIsInJvbGVzIjpbXSwiaWF0IjoxNjgwMzc0MTc1LCJleHAiOjE2ODAzNzQ0NzV9.S_CADujT1Ldgz4AUdPWAeeuVmADLuKKOJl7yjaPp0v8"
+    ServerError:
+      type: "object"
+      properties:
+        code:
+          type: "string"
+          example: "server_error"
+        message:
+          type: "string"
+          example: "Ошибка сервера"
+    Login:
+      type: "object"
+      properties:
+        login:
+          type: "string"
+          example: "user"
+        password:
+          type: "string"
+          example: "qwerty123"
+    Register:
+      type: "object"
+      properties:
+        login:
+          type: "string"
+          example: "user"
+        roles:
+          type: "array"
+          items:
+            type: "string"
+          example: ["admin"]
+        password:
+          type: "string"
+          example: "qwerty123"
+        repeatedPassword:
+          type: "string"
+          example: "qwerty123"
+security:
+  - BearerAuth: []
+tags:
+  - name: "authorize"
+    description: "Авторизация"
+  - name: "tokens"
+    description: "Работа с токенами"
+paths:
+  /authorize/login:
+    post:
+      tags:
+        - "authorize"
+      summary: "Войти"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "200":
+          description: "Токены для входа"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Tokens"
+        "400":
+          description: "Обработанная ошибка"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+        "500":
+          description: "Необработанная ошибка"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ServerError"
+  /authorize/register:
+    post:
+      tags:
+        - "authorize"
+      summary: "Регистрация"
+      requestBody:
+        description: "Схема для регистрации"
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/Register"
+      responses:
+        "200":
+          description: "Токены для входа"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Tokens"
+        "400":
+          description: "Обработанная ошибка"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ServerError"
+        "500":
+          description: "Необработанная ошибка"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ServerError"
+  /tokens/refresh:
+    post:
+      tags:
+        - "tokens"
+      summary: "Обновить токен доступа"
+      requestBody:
+        description: "Схема для обновления токенов"
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/Tokens"
+      responses:
+        "200":
+          description: "Обновленные токены"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Tokens"
+        "400":
+          description: "Обработанная ошибка"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ServerError"
+        "500":
+          description: "Необработанная ошибка"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ServerError"
+  /tokens/divide:
+    post:
+      tags:
+        - "tokens"
+      summary: "Обнулить токен обновления"
+      requestBody:
+        description: "Схема для обнуления токена пользователя"
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/Tokens"
+      responses:
+        "200":
+          description: "Сообщение об обнулении"
+          content:
+            "text/plain":
+              schema:
+                type: "string"
+                example: divided
+        "400":
+          description: "Обработанная ошибка"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ServerError"
+        "401":
+          description: "Неавторизованный пользователь"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ServerError"
+        "500":
+          description: "Необработанная ошибка"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ServerError"
+  /management/authorize/login:
+    post:
+      tags:
+        - "authorize"
+      summary: "Войти с доступом упраления"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "200":
+          description: "Токены для входа"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Tokens"
+        "400":
+          description: "Обработанная ошибка"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+        "500":
+          description: "Необработанная ошибка"
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ServerError"

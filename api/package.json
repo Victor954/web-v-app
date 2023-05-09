@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
-    "start": "nodemon -r tsconfig-paths/register src/main.ts"
+    "start": "nodemon -r tsconfig-paths/register src/index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -43,6 +43,7 @@
     "passport": "^0.6.0",
     "passport-http-bearer": "^1.0.1",
     "swagger-ui-express": "^4.6.2",
-    "winston": "^3.8.2"
+    "winston": "^3.8.2",
+    "yaml": "^2.2.2"
   }
 }

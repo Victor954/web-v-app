@@ -1,11 +1,7 @@
-import options from './options.json';
-import paths from './paths';
-import schemas from './components';
+import YAML from 'yaml';
+import fs from 'fs';
+import { resolve } from 'path';
 
-export default {
-	...options,
-	paths,
-	components: {
-		schemas
-	}
-};
+const file = fs.readFileSync(resolve(__dirname , 'swagger.yml'), 'utf-8');
+
+export default YAML.parse(file);

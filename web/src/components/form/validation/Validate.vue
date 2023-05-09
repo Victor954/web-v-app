@@ -1,7 +1,7 @@
 <template>
     <FormGroup>
         <slot></slot>
-        <FormInfo type="error" v-if="invalidValue">
+        <FormInfo data-test="formInvalidValue" type="error" v-if="invalidValue">
             {{ invalidValue }}
         </FormInfo>
     </FormGroup>

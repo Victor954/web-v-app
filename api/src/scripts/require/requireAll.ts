@@ -27,12 +27,20 @@ function loopModules(args: LoopModulesArg): any[] {
 
 	const modules = filesList
 		.filter(dirent => filterExclude({ ...args , fileName: dirent.name }))
-		.map((dirent) => {
-			const res = path.resolve(args.dir, dirent.name);
-			return dirent.isDirectory() ? loopModules(args) : require(res);
-		});
+		.reduce<any[]>((modules , dirent) => {
+			const nestedDir = path.resolve(args.dir, dirent.name);
 
-	return [...modules];
+			if(dirent.isDirectory()) {
+				modules.push(...loopModules({ ...args , dir: nestedDir}));
+			} else {
+				// eslint-disable-next-line @typescript-eslint/no-var-requires
+				modules.push(require(nestedDir));
+			}
+			
+			return modules;
+		} , []);
+
+	return modules;
 }
 
 function filterExclude({ excludeFileName , fileName ,options }: Omit<LoopModulesArg ,'dir'> & { fileName: string }) {

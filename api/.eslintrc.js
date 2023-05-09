@@ -1,6 +1,6 @@
 module.exports = {
 	'env': {
-		'browser': true,
+		'node': true,
 		'es2021': true
 	},
 	'extends': [
@@ -21,6 +21,12 @@ module.exports = {
 		'indent': [
 			'error',
 			'tab'
+		],
+		'@typescript-eslint/no-empty-interface': [
+			'error',
+			{
+				'allowSingleExtends': true
+			}
 		],
 		'linebreak-style': [
 			'error',

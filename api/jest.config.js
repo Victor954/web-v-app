@@ -1,8 +1,16 @@
 module.exports = {
-	preset: './src/test/app-preset.js',
+	preset: './src/tests/app-preset.js',
 	maxWorkers: '50%',
+	transform: {
+		'^.+\\.ts?$': [
+			'ts-jest',
+			{
+				isolatedModules: true,
+			},
+		],
+	},
 	setupFilesAfterEnv: [
-		'<rootDir>/src/test/setup.ts'
+		'<rootDir>/src/tests/setup.ts'
 	],
 	moduleNameMapper: {
 		'^@/(.*)': '<rootDir>/src/$1'

@@ -1,22 +1,32 @@
 
 import ServerError from '@/domain/errors/ServerError';
-import { RefreshToken } from '@/domain/types/request/tokens.types';
 import { Tokens } from '@/domain/types/response/tokens.types';
-import { db } from '@/scripts/mongo';
-import { TokenExpiredError } from 'jsonwebtoken';
+import jwt ,{ TokenExpiredError , JwtPayload}  from 'jsonwebtoken';
 import { generateTokens } from './factory.service';
-import { verifyAccessToken, verifyRefreshToken } from './verify.service';
+import { verifyAccessToken, verifyRefreshToken} from './verify.service';
+import UserModel from '@/scripts/mongo/models/identity/UserModel';
+import { TokenClaims } from '@/domain/types/tokens.types';
 
-export async function refreshTokenAsync({ accessToken , refreshToken , login }: RefreshToken): Promise<Tokens> {
-	const user = await db.UserModel.findOne({ login });
+const refreshError = new ServerError({
+	message: 'token is invalid',
+	code: 'token_error',
+	statusCode: 400
+});
+
+export async function refreshTokenAsync({ accessToken , refreshToken }: Tokens): Promise<Tokens> {
+
+	const claims = jwt.decode(accessToken) as JwtPayload & TokenClaims;
+	const user = await UserModel.findOne({ login: claims.login });
+
+	if(!user) throw refreshError;
 
 	const at = hasExpired(accessToken, verifyAccessToken);
 	const rt = hasExpired(refreshToken, verifyRefreshToken);
 
 	const isValidAccessToken = at instanceof Error !== true;
-	const isValidRefreshToken = rt === false && refreshToken === user!.refreshToken;
+	const isValidRefreshToken = rt === false && refreshToken === user.refreshToken;
 
-	if(user && isValidAccessToken && isValidRefreshToken) {
+	if(isValidAccessToken && isValidRefreshToken) {
         
 		const tokens = generateTokens(user);
         
@@ -29,16 +39,19 @@ export async function refreshTokenAsync({ accessToken , refreshToken , login }: 
 		return tokens;
 	}
 
-	throw new ServerError({
-		message: 'token is invalid',
-		code: 'token_error',
-		statusCode: 400
-	});
+	throw refreshError;
 }
 
-export async function divideTokenAsync(login: string): Promise<boolean> {
+export async function divideTokenAsync(refreshToken:string , login?: string): Promise<void> {
 
-	const user = await db.UserModel.findOneAndUpdate({ login } , {
+	const test = await UserModel.find({});
+
+	console.log(test , login , refreshToken);
+
+	const user = await UserModel.findOneAndUpdate({ 
+		login: login , 
+		refreshToken 
+	} , {
 		refreshToken: null
 	} , { new: true });
 
@@ -47,8 +60,6 @@ export async function divideTokenAsync(login: string): Promise<boolean> {
 		code: 'token_error',
 		statusCode: 400
 	});
-
-	return user.refreshToken === null;
 }
 
 /**
