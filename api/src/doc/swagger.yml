@@ -40,10 +40,25 @@ components:
           example: "qwerty123"
     Register:
       type: "object"
+      required:
+        - "login"
+        - "name"
+        - "surname"
+        - "password"
+        - "repeatedPassword"
       properties:
         login:
           type: "string"
           example: "user"
+        name:
+          type: "string"
+          example: "Иван"
+        surname:
+          type: "string"
+          example: "Иванов"
+        patronymic:
+          type: "string"
+          example: "Иванович"
         roles:
           type: "array"
           items:
@@ -70,7 +85,7 @@ paths:
       summary: "Войти"
       requestBody:
         content:
-          "application/json":
+          "application/x-www-form-urlencoded":
             schema:
               $ref: "#/components/schemas/Login"
       responses:
@@ -100,7 +115,7 @@ paths:
       requestBody:
         description: "Схема для регистрации"
         content:
-          "application/json":
+          "application/x-www-form-urlencoded":
             schema:
               $ref: "#/components/schemas/Register"
       responses:
@@ -196,7 +211,7 @@ paths:
       summary: "Войти с доступом упраления"
       requestBody:
         content:
-          "application/json":
+          "application/x-www-form-urlencoded":
             schema:
               $ref: "#/components/schemas/Login"
       responses:

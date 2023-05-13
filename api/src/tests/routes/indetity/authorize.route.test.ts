@@ -1,7 +1,7 @@
 import { User } from '@/domain/types/identity.types';
 import UserModel from '@/scripts/mongo/models/identity/UserModel';
-import request from 'supertest';
 import mongo from '@/scripts/mongo';
+import { makePostRequestAsync } from '@/tests/helpers/requestExpress';
 
 import * as encodePassword from '@/services/encode/encodePassword.service';
 import * as factoryTokens from '@/services/tokens/factory.service';
@@ -22,6 +22,11 @@ beforeAll(async () => {
 	const users:User[] = [
 		{
 			login: 'User',
+			personInfo: {
+				name: 'Иван',
+				surname: 'Иванов',
+				patronymic: 'Иванович'
+			},
 			passwordHash: 'passwordHash',
 			refreshToken: 'some_refreshToken',
 			salt: 'salt',
@@ -29,6 +34,10 @@ beforeAll(async () => {
 		},
 		{
 			login: 'CasualUser',
+			personInfo: {
+				name: 'Евгений',
+				surname: 'Понасенков',
+			},
 			passwordHash: 'passwordHash',
 			refreshToken: 'some_refreshToken',
 			salt: 'salt',
@@ -104,9 +113,12 @@ describe('testing /api/v1/authorize/login' , () => {
 	async function makeLoginRequest(login: Login) {
 		spyEncode.mockReturnValue(Promise.resolve(login.password));
 	
-		return await makePostRequestAsync(login, url);
+		return await makePostRequestAsync({
+			body: login,
+			url: url,
+			contentType: 'application/x-www-form-urlencoded'
+		});
 	}
-	
 });
 
 describe('testing /api/v1/authorize/register' , () => {
@@ -129,6 +141,9 @@ describe('testing /api/v1/authorize/register' , () => {
 	test('testing register new user' , async () => {
 		const register:Register = {
 			login: 'LoginUser1',
+			name: 'Иван',
+			surname: 'Иванов',
+			patronymic: 'Иванович',
 			password: 'Password12345',
 			repeatedPassword: 'Password12345',
 			roles: [],
@@ -136,7 +151,12 @@ describe('testing /api/v1/authorize/register' , () => {
 
 		spyEncode.mockReturnValue(Promise.resolve(register.password));
 		
-		const response = await makePostRequestAsync(register, url);
+		const response = await makePostRequestAsync({
+			body: register,
+			url: url,
+			contentType: 'application/x-www-form-urlencoded'
+		});
+
 		const registeredUser = await UserModel.findOne({ login: register.login });
 
 		expect(response.statusCode).toBe(200);
@@ -144,6 +164,11 @@ describe('testing /api/v1/authorize/register' , () => {
 		expect(registeredUser).toEqual(
 			expect.objectContaining({      
 				login: register.login,
+				personInfo: expect.objectContaining({
+					name: 'Иван',
+					surname: 'Иванов',
+					patronymic: 'Иванович',
+				}),
 				salt: 'salt',
 				passwordHash: register.password,
 				refreshToken: tokens.refreshToken,
@@ -156,7 +181,10 @@ describe('testing /api/v1/authorize/register' , () => {
 	test('testing register new user with roles' , async () => {
 
 		const register:Register = { 
-			login: 'userWithRoles' , 
+			login: 'userWithRoles', 
+			name: 'Иван',
+			surname: 'Иванов',
+			patronymic: 'Иванович',
 			password: 'Password12345',
 			repeatedPassword: 'Password12345',
 			roles: ['admin' , 'dev_lead'] 
@@ -164,7 +192,12 @@ describe('testing /api/v1/authorize/register' , () => {
 
 		spyEncode.mockReturnValue(Promise.resolve(register.password));
 
-		const response = await makePostRequestAsync(register, url);
+		const response = await makePostRequestAsync({
+			body: register,
+			url: url,
+			contentType: 'application/x-www-form-urlencoded'
+		});
+
 		const registeredUser = await UserModel.findOne({ login: register.login });
 
 		expect(response.statusCode).toBe(200);
@@ -172,6 +205,11 @@ describe('testing /api/v1/authorize/register' , () => {
 		expect(registeredUser).toEqual(
 			expect.objectContaining({      
 				login: register.login,
+				personInfo: expect.objectContaining({
+					name: 'Иван',
+					surname: 'Иванов',
+					patronymic: 'Иванович',
+				}),
 				salt: 'salt',
 				passwordHash: register.password,
 				refreshToken: tokens.refreshToken,
@@ -184,13 +222,20 @@ describe('testing /api/v1/authorize/register' , () => {
 	test('testing with exist login' , async () => {
         
 		const register:Register = { 
-			login: 'User' , 
+			login: 'User',
+			name: 'Иван',
+			surname: 'Иванов',
+			patronymic: 'Иванович',
 			password: 'passwordHash',
 			repeatedPassword: 'passwordHash',
 			roles: [] 
 		};
 
-		const response = await makePostRequestAsync(register, url);
+		const response = await makePostRequestAsync({
+			body: register,
+			url: url,
+			contentType: 'application/x-www-form-urlencoded'
+		});
 
 		expect(response.statusCode).toBe(400);
 		expect(response.body).toEqual({
@@ -202,13 +247,20 @@ describe('testing /api/v1/authorize/register' , () => {
 	test('testing with not equals password and repeatedPassword' , async () => {
         
 		const register:Register = { 
-			login: 'NewUser2' , 
+			login: 'NewUser2' ,
+			name: 'Иван',
+			surname: 'Иванов',
+			patronymic: 'Иванович',
 			password: 'passwordHash',
 			repeatedPassword: 'passwordHash2',
 			roles: [] 
 		};
 
-		const response = await makePostRequestAsync(register, url);
+		const response = await makePostRequestAsync({
+			body: register,
+			url: url,
+			contentType: 'application/x-www-form-urlencoded'
+		});
 
 		expect(response.statusCode).toBe(400);
 		expect(response.body).toEqual({
@@ -217,14 +269,3 @@ describe('testing /api/v1/authorize/register' , () => {
 		});
 	});
 });
-
-
-async function makePostRequestAsync<T extends object>(body: T , url: string) {
-	const response = await request(global.app)
-		.post(url)
-		.set('Content-Type', 'application/json')
-		.set('Accept', 'application/json')
-		.send(body);
-
-	return response;
-}

@@ -1,5 +1,12 @@
-export interface User {
+export type PersonInfo = {
+    name: string;
+    surname: string;
+    patronymic?: string | null;
+}
+
+export type User = {
     login: string;
+    personInfo: PersonInfo;
     passwordHash: string;
     salt: string;
     refreshToken: string;

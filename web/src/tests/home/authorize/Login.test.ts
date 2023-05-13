@@ -9,7 +9,7 @@ import { nextTick } from 'vue';
 import _ from 'lodash'; 
 describe('testing home/authorize/Login' , () => {
 
-    const adapter = new MockAdapter(api);
+    const adapter = new MockAdapter(api.instance);
 
     let plugins!:ReturnType<typeof createPlugins>;
     let push!:jest.SpyInstance<any, any[], any>;

@@ -1,3 +1,3 @@
 export {
-    instance as api
+    default as api
 } from './instance'

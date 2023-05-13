@@ -1,9 +1,14 @@
 import { Schema , model } from 'mongoose';
 import { User } from '@/domain/types/identity.types';
+import PersonInfoSchema from '../../schemas/PersonInfoSchema';
 
 const UserSchema = new Schema<User>({
 	login: {
 		type: String,
+		required: true,
+	},
+	personInfo: {
+		type: PersonInfoSchema,
 		required: true,
 	},
 	refreshToken: {

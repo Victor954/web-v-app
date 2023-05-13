@@ -2,9 +2,9 @@ import { Tokens } from '@/domain/types/response/tokens.types';
 import { TokenClaims } from '@/domain/types/tokens.types';
 import jwt from 'jsonwebtoken';
 
-export function generateAccessToken({ login , roles } : TokenClaims) {
+export function generateAccessToken({ login , roles , personInfo } : TokenClaims) {
 	return jwt.sign(
-		{ login , roles } , 
+		{ login , roles , personInfo} , 
 		process.env.ACCESS_SECRET_KEY, 
 		{ expiresIn: '5 min' }
 	);
@@ -18,9 +18,9 @@ export function generateRefreshToken({ login , roles } : TokenClaims) {
 	);
 }
 
-export function generateTokens({ login , roles } : TokenClaims): Tokens {
-	const accessToken = generateAccessToken({ login , roles });
-	const refreshToken = generateRefreshToken({ login , roles });
+export function generateTokens({ login , roles , personInfo} : TokenClaims): Tokens {
+	const accessToken = generateAccessToken({ login , roles , personInfo });
+	const refreshToken = generateRefreshToken({ login , roles , personInfo });
 
 	return {
 		accessToken,

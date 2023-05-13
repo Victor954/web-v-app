@@ -7,10 +7,17 @@
 
 import { computed } from 'vue';
 type Props = {
-    styleType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' | 'link'
+    styleType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' | 'link';
+    outline?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    outline: false,
+});
 
-const classType = computed(() => `btn-${props.styleType}`);
+const classType = computed(() => `btn${getOutline()}-${props.styleType}`);
+
+function getOutline() {
+    return props.outline ? '-outline' : '';
+}
 </script>

@@ -1,7 +1,7 @@
 import { User } from '@/domain/types/identity.types';
 import UserModel from '@/scripts/mongo/models/identity/UserModel';
 import { useFakeMongo  } from '@/tests/helpers/hooks';
-import request from 'supertest';
+import { makePostRequestAsync } from '@/tests/helpers/requestExpress';
 
 import * as encodePassword from '@/services/encode/encodePassword.service';
 import * as factoryTokens from '@/services/tokens/factory.service';
@@ -29,6 +29,11 @@ describe('testing /api/v1/management/authorize/login' , () => {
 		const users:User[] = [
 			{
 				login: 'User',
+				personInfo: {
+					name: 'Иван',
+					surname: 'Иванов',
+					patronymic: 'Иванович'
+				},
 				passwordHash: 'passwordHash',
 				refreshToken: 'some_refreshToken',
 				salt: 'salt',
@@ -36,6 +41,11 @@ describe('testing /api/v1/management/authorize/login' , () => {
 			},
 			{
 				login: 'CasualUser',
+				personInfo: {
+					name: 'Иван',
+					surname: 'Иванов',
+					patronymic: 'Иванович'
+				},
 				passwordHash: 'passwordHash',
 				refreshToken: 'some_refreshToken',
 				salt: 'salt',
@@ -60,11 +70,7 @@ describe('testing /api/v1/management/authorize/login' , () => {
 
 		const login = 'User';
 
-		const response = await makeRequestAsync({
-			login: login, 
-			password: 'passwordHash'
-		});
-
+		const response = await makeLoginRequest({ login: login , password: 'passwordHash' });
 		const updatedUser = await UserModel.findOne({ login });
 
 		await expect(updatedUser?.refreshToken).toBe(tokens.refreshToken);
@@ -73,10 +79,7 @@ describe('testing /api/v1/management/authorize/login' , () => {
 	});
 
 	test('testing login as User with invalid password' , async () => {
-		const response = await makeRequestAsync({
-			login: 'User', 
-			password: 'invalidPassword'
-		});
+		const response = await makeLoginRequest({ login: 'User' , password: 'invalidPassword' });
 
 		await expect(response.statusCode).toBe(400);
 		await expect(response.body).toEqual(authorizeError);
@@ -84,24 +87,23 @@ describe('testing /api/v1/management/authorize/login' , () => {
 
 	test('testing login as User with roles equals 0' , async () => {
 
-		const response = await makeRequestAsync({
-			login: 'CasualUser', 
-			password: 'passwordHash'
+		const response = await makePostRequestAsync({
+			body: { login: 'CasualUser' , password: 'passwordHash' }, 
+			contentType: 'application/x-www-form-urlencoded',
+			url: url
 		});
 
 		await expect(response.statusCode).toBe(400);
 		await expect(response.body).toEqual(authorizeError);
 	});
-	
-	async function makeRequestAsync(login: Login) {
+
+	async function makeLoginRequest(login: Login) {
 		spyEncode.mockReturnValue(Promise.resolve(login.password));
-
-		const response = await request(global.app)
-			.post(url)
-			.set('Content-Type', 'application/json')
-			.set('Accept', 'application/json')
-			.send(login);
-
-		return response;
+	
+		return await makePostRequestAsync({
+			body: login,
+			url: url,
+			contentType: 'application/x-www-form-urlencoded'
+		});
 	}
 });

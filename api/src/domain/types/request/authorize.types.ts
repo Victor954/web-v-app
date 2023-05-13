@@ -1,3 +1,4 @@
+import { PersonInfo } from '../identity.types';
 import { User } from '../identity.types';
 
 export type Login = {
@@ -8,4 +9,4 @@ export type Login = {
 export type Register = {
     password: string;
     repeatedPassword: string;
-} & Omit<User , 'passwordHash' | 'salt' | 'refreshToken'>
+} & Pick<User , 'login' | 'roles'> & PersonInfo

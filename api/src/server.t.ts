@@ -13,6 +13,8 @@ export default function createExpress() {
 	const app = express();
 
 	passport.use(bearerStrategy);
+
+	app.use(express.urlencoded({ extended: true }));
 	app.use(express.json());
 
 	app.use('/api/v1' , routes);

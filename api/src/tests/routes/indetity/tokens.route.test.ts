@@ -2,11 +2,16 @@ import mongo from '@/scripts/mongo';
 import UserModel from '@/scripts/mongo/models/identity/UserModel';
 import { User } from '@/domain/types/identity.types';
 import { generateAccessToken , generateRefreshToken } from '@/tests/helpers/tokensFactory';
-import request from 'supertest';
+import { makePostRequestAsync } from '@/tests/helpers/requestExpress';
 
 const refreshToken = generateRefreshToken({ 
 	claims: { 
-		login: 'userTokens' , 
+		login: 'userTokens', 
+		personInfo: {
+			name: 'Иван',
+			surname: 'Иванов',
+			patronymic: 'Иванович'
+		},
 		roles: []
 	} , 
 	options: { 
@@ -16,6 +21,11 @@ const refreshToken = generateRefreshToken({
 
 const user:User = { 
 	login: 'userTokens', 
+	personInfo: {
+		name: 'Иван',
+		surname: 'Иванов',
+		patronymic: 'Иванович'
+	},
 	passwordHash: 'someHash',
 	salt: 'someSalt',
 	refreshToken: refreshToken,
@@ -24,19 +34,22 @@ const user:User = {
 
 beforeAll(async () => {
 	await mongo.connectAsync();
-
-	await UserModel.insertMany([
-		user
-	]);
 });
 
 afterAll(async () => {
-	
-	await UserModel.deleteMany({});
 	await mongo.closeAsync();
 });
 
 describe('testing /api/v1/tokens/refresh' , () => {
+
+	beforeEach(async () => {
+		const userModel = new UserModel(user);
+		await userModel.save();
+	});
+	
+	afterEach(async () => {	
+		await UserModel.deleteMany({});
+	});
 
 	const url = '/api/v1/tokens/refresh';
 
@@ -45,9 +58,13 @@ describe('testing /api/v1/tokens/refresh' , () => {
 		const obsoleteAccessToken = generateAccessToken({ claims: user , options: { expiresIn: '-5 min' } });
 
 		const response = await makePostRequestAsync({
-			accessToken: obsoleteAccessToken, 
-			refreshToken: refreshToken, 
-		},url);
+			body: {
+				accessToken: obsoleteAccessToken, 
+				refreshToken: refreshToken, 
+			},
+			contentType: 'application/json',
+			url: url
+		});
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toBeValidTokens(user.login);
@@ -56,11 +73,15 @@ describe('testing /api/v1/tokens/refresh' , () => {
 	test('testing with normal accessToken' , async () => {
 
 		const normalAccessToken = generateAccessToken({ claims: user , options: { expiresIn: '5 min' } });
-		
+	
 		const response = await makePostRequestAsync({
-			accessToken: normalAccessToken, 
-			refreshToken: user.refreshToken, 
-		},url);
+			body: {
+				accessToken: normalAccessToken, 
+				refreshToken: user.refreshToken,
+			},
+			contentType: 'application/json',
+			url: url
+		});
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toBeValidTokens(user.login);
@@ -72,9 +93,13 @@ describe('testing /api/v1/tokens/refresh' , () => {
 		const obsoleteRefreshToken = generateRefreshToken({ claims: user , options: { expiresIn: '-1 days' } });
 
 		const response = await makePostRequestAsync({
-			accessToken: obsoleteAccessToken, 
-			refreshToken: obsoleteRefreshToken, 
-		},url);
+			body: {
+				accessToken: obsoleteAccessToken, 
+				refreshToken: obsoleteRefreshToken,
+			},
+			contentType: 'application/json',
+			url: url
+		});
 
 		expect(response.statusCode).toBe(400);
 		expect(response.body).toEqual({
@@ -85,15 +110,19 @@ describe('testing /api/v1/tokens/refresh' , () => {
 
 	test('testing with custom tokens' , async () => {
 
-		const claims = { login: user.login , roles: [] };
+		const claims = { login: user.login , personInfo: { name: 'Иванов' , surname: 'Иван'}, roles: [] };
         
 		const hackingAccessToken = generateAccessToken({ claims , key: 'HACK_KEY' , options: { expiresIn: '5 min' } });
 		const hackingRefreshToken = generateRefreshToken({ claims , key: 'HACK_KEY' , options: { expiresIn: '7 days' } });
 
 		const response = await makePostRequestAsync({
-			accessToken: hackingAccessToken, 
-			refreshToken: hackingRefreshToken, 
-		},url);
+			body: {
+				accessToken: hackingAccessToken, 
+				refreshToken: hackingRefreshToken, 
+			},
+			contentType: 'application/json',
+			url: url
+		});
 
 		expect(response.statusCode).toBe(400);
 		expect(response.body).toEqual({
@@ -107,6 +136,15 @@ describe('testing /api/v1/tokens/divide' , () => {
 
 	const url = '/api/v1/tokens/divide';
 
+	beforeAll(async () => {
+		const userModel = new UserModel(user);
+		await userModel.save();
+	});
+	
+	afterAll(async () => {
+		await UserModel.deleteMany({});
+	});
+
 	test('divide token with current user' , async () => {
 
 		const accessToken = generateAccessToken({ claims: user , options: { expiresIn: '5 min' } });
@@ -114,9 +152,14 @@ describe('testing /api/v1/tokens/divide' , () => {
 		console.log(refreshToken);
 
 		const response = await makePostRequestAsync({
-			accessToken: accessToken, 
-			refreshToken: refreshToken, 
-		},url , accessToken);
+			body: {
+				accessToken: accessToken, 
+				refreshToken: refreshToken, 
+			},
+			bearerToken: accessToken,
+			contentType: 'application/json',
+			url: url
+		});
 
 		const updatedUser = await UserModel.findOne({ login: user.login } , { refreshToken: 1 });
 
@@ -131,9 +174,14 @@ describe('testing /api/v1/tokens/divide' , () => {
 		const refreshToken = generateRefreshToken({ claims: user , options: { expiresIn: '7 d' } });
 
 		const response = await makePostRequestAsync({
-			accessToken: accessToken, 
-			refreshToken: refreshToken, 
-		}, url, accessToken);
+			body: {
+				accessToken: accessToken, 
+				refreshToken: refreshToken, 
+			},
+			bearerToken: accessToken,
+			contentType: 'application/json',
+			url: url
+		});
 
 		expect(response.statusCode).toBe(400);
 		expect(response.body).toEqual({
@@ -144,25 +192,29 @@ describe('testing /api/v1/tokens/divide' , () => {
 
 	test('divide token with invalid user' , async () => {
 
-		const accessToken = generateAccessToken({ claims: { login: 'Hacker' , roles: ['admin'] } , options: { expiresIn: '5 min' } });
+		const accessToken = generateAccessToken({ 
+			claims: { 
+				login: 'Hacker' , 
+				roles: ['admin'] , 
+				personInfo: { 
+					name: 'Иванов' , 
+					surname: 'Иван'
+				}} , 
+			options: { expiresIn: '5 min' } 
+		});
+
 		const refreshToken = generateRefreshToken({ claims: user , options: { expiresIn: '7 d' } });
 
 		const response = await makePostRequestAsync({
-			accessToken: accessToken, 
-			refreshToken: refreshToken, 
-		}, url, accessToken);
+			body: {
+				accessToken: accessToken, 
+				refreshToken: refreshToken, 
+			},
+			bearerToken: accessToken,
+			contentType: 'application/json',
+			url: url
+		});
 
 		expect(response.statusCode).toBe(401);
 	});
 });
-
-async function makePostRequestAsync<T extends object>(body: T , url: string , token?: string) {
-	const response = await request(global.app)
-		.post(url)
-		.set('Authorization' , `Bearer ${token}`)
-		.set('Content-Type', 'application/json')
-		.set('Accept', 'application/json')
-		.send(body);
-
-	return response;
-}

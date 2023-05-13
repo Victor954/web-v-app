@@ -40,28 +40,35 @@ export async function loginAsync({ login , password }: Login , options?: LoginOp
 
 export async function registerAsync({
 	login,
+	name,
+	surname,
+	patronymic,
 	password,
 	roles
 }: Register): Promise<Tokens> {
     
 	const sameLoginUsersCount = await UserModel.count({ login });
 
-	if(sameLoginUsersCount > 0) {
+	if(sameLoginUsersCount > 0) throw new ServerError({
+		code: 'authorize_error',
+		message: 'user with same login is exist',
+		statusCode: 400
+	});
 
-		throw new ServerError({
-			code: 'authorize_error',
-			message: 'user with same login is exist',
-			statusCode: 400
-		});
-	}
+	const personInfo = {
+		name,
+		surname,
+		patronymic,
+	};
 
 	const salt = generateSalt();
 	const passwordHash = await encodeAsync(password, salt);
 
-	const tokens = generateTokens({ login: login , roles: roles });
+	const tokens = generateTokens({ login , roles , personInfo });
 
 	const user:User = {
-		login: login,
+		login,
+		personInfo,
 		refreshToken: tokens.refreshToken,
 		passwordHash: passwordHash,
 		salt: salt,

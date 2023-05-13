@@ -2,7 +2,8 @@ import { Rules, Validation } from "./types";
 import validator from 'validator';
 const rules: Rules = {
     required: [(str) => str.length > 0 , 'Поле обязательно для заполнения'],
-    alphanumeric: [(str) => validator.isAlphanumeric(str) , 'Только разрешенные символы'],
+    alphanumeric: [notRequired((str) => validator.isAlphanumeric(str)) , 'Только разрешенные символы'],
+    cyrillic: [notRequired((str) => validator.isAlphanumeric(str , 'ru-RU')),'Только разрешенные символы'],
     length
 }
 
@@ -23,7 +24,11 @@ function length(min?: number , max?: number): Validation {
         msg = `Только от ${min} до ${max} символов`
     }
 
-    return [(str: string) => validator.isLength(str , { min : min, max: max }) , msg];
+    return [notRequired((str: string) => validator.isLength(str , { min : min, max: max })), msg];
+}
+
+function notRequired(rule: (str: string) => boolean) {
+    return (str: string) => str.length > 0 ? rule(str) : true;
 }
 
 export default rules;

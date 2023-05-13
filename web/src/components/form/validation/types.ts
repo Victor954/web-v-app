@@ -8,7 +8,7 @@ export type ValidationState = {
     bindings: string[]
 }
 
-type RulesEnum = 'required' | 'alphanumeric';
+type RulesEnum = 'required' | 'alphanumeric' | 'cyrillic';
 
 export type Rules = Record<RulesEnum , Validation> & {
     length: (min?: number, max?: number) => Validation

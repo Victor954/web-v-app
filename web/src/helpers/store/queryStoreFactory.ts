@@ -4,6 +4,7 @@ import { AxiosError, AxiosRequestConfig } from 'axios';
 import { api } from '@/api';
 import { StoreDefinition, defineStore } from 'pinia';
 import { ErrorResponse } from '@/types/response/error.res.types';
+import { ApiConfig } from '@/api/Api';
 
 type Options = {
     name: string  
@@ -16,7 +17,7 @@ export type QueryState<T> = {
 }
 
 export type QueryActions<T> = {
-    fetchAsync: (op: AxiosRequestConfig) => Promise<T | null>,
+    fetchAsync: (op: ApiConfig) => Promise<T | null>,
     setData: (data: T) => void
 }
 
@@ -28,7 +29,7 @@ export default function queryStoreFactory<TResponse>(options : Options): QuerySt
         const error = ref<LoadError>(null);
         const state = ref<LoadState>('initialized');
         
-        async function fetchAsync(apiConfig: AxiosRequestConfig): Promise<TResponse | null> {
+        async function fetchAsync(apiConfig: ApiConfig): Promise<TResponse | null> {
             try {
                 state.value = 'pending';
                 const { data: responseData } = await api.request<TResponse>(apiConfig);

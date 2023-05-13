@@ -6,7 +6,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 type Props = {
-    type: 'error' | 'info'
+    type?: 'error' | 'info'
 }
 
 const props = withDefaults(defineProps<Props>(), { type: 'info' });

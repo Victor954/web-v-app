@@ -1,7 +1,8 @@
-import { defineStore } from 'pinia'; 
-import { User } from '../types/authorize.res.types';
-import jwtDecode from "jwt-decode";
 import { computed} from 'vue';
+import { defineStore } from 'pinia'; 
+import jwtDecode from "jwt-decode";
+
+import { User } from '../types/authorize.res.types';
 import { LoginReq, RegisterReq } from '@/types/request/authorize.req.types';
 import { useFetchTokens } from './queries/authorizeStore';
 import { mapQueryResult } from '@/helpers/store';
@@ -11,12 +12,18 @@ export const useAuthorizeStore = defineStore('authorize', () => {
     
     const accessToken = computed(() => tokensQuery.data?.accessToken);
     const refreshToken = computed(() => tokensQuery.data?.refreshToken);
-    const user = computed(() =>  accessToken.value ? jwtDecode(accessToken.value) as User : null);
+    const user = computed(() => accessToken.value ? jwtDecode(accessToken.value) as User : null);
 
     tokensQuery.$subscribe((mutation , state) => {
-        if(mutation.storeId === 'queryTokens' && state.data) {
-            localStorage.setItem('accessToken' , state.data.accessToken);
-            localStorage.setItem('refreshToken' , state.data.refreshToken);    
+        if(mutation.storeId === 'queryTokens') 
+        {
+            if(state.data) {
+                localStorage.setItem('accessToken' , state.data.accessToken);
+                localStorage.setItem('refreshToken' , state.data.refreshToken);    
+            } else {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');    
+            }  
         }
     });
 
@@ -37,7 +44,8 @@ export const useAuthorizeStore = defineStore('authorize', () => {
         await tokensQuery.fetchAsync({
             method: 'POST',
             url: 'authorize/login',
-            data: loginData
+            contentType: 'urlencoded',
+            data: loginData,
         });
     }
 
@@ -46,6 +54,7 @@ export const useAuthorizeStore = defineStore('authorize', () => {
         await tokensQuery.fetchAsync({
             method: 'POST',
             url: 'management/authorize/login',
+            contentType: 'urlencoded',
             data: loginData
         });
     }
@@ -55,7 +64,8 @@ export const useAuthorizeStore = defineStore('authorize', () => {
         await tokensQuery.fetchAsync({
             method: 'POST',
             url: 'authorize/register',
-            data: registerData
+            contentType: 'urlencoded',
+            data: registerData,
         });
     }
 
@@ -76,12 +86,24 @@ export const useAuthorizeStore = defineStore('authorize', () => {
         return false;
     }
 
+    async function fetchLogout() {
+        const result = await tokensQuery.fetchAsync({
+            method: 'POST',
+            url: '/tokens/divide',
+            data: tokensQuery.data,
+            transformResponse: (response) => response === 'divided' ? null : tokensQuery.data
+        });
+
+        return result;
+    }
+
     return { 
         user: user, 
         accessToken: accessToken,
         refreshToken: refreshToken,
         query: mapQueryResult(tokensQuery) ,
         fetchLogin,
+        fetchLogout,
         fetchManagementLogin,
         fetchRegister,
         fetchRefreshToken,

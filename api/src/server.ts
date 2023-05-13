@@ -23,6 +23,8 @@ export default function createExpress() {
 	app.use(corsMiddleware);
 
 	passport.use(bearerStrategy);
+
+	app.use(express.urlencoded({ extended: true }));
 	app.use(express.json());
 
 	app.use('/api/v1' , routes);

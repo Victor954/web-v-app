@@ -8,7 +8,7 @@ import { AxiosError, AxiosRequestConfig } from 'axios';
 import { Router } from 'vue-router';
 import LocalStorageMock from './mocks/localStorageMock';
 
-const mock = new MockAdapter(api);
+const mock = new MockAdapter(api.instance);
 
 let plugins!:ReturnType<typeof createPlugins>;
 let router: Router;
@@ -40,7 +40,7 @@ describe('testing api authorize' , () => {
         const push = jest.spyOn(router, 'push')
 
         try {
-            await api.get('/books');
+            await api.instance.get('/books');
         } catch (error) {
             expect(error instanceof AxiosError && error.response?.status === 401).toBe(true);
         }
@@ -65,7 +65,7 @@ describe('testing api authorize' , () => {
         });
 
         try {
-            await api.get('/books');
+            await api.instance.get('/books');
         } catch (error) {
             expect(error instanceof AxiosError && error.response?.status === 401).toBe(true);
         }
@@ -97,7 +97,7 @@ describe('testing api authorize' , () => {
         });
 
         try {
-            await api.get('/books');
+            await api.instance.get('/books');
         } catch (error) {
             expect(error instanceof AxiosError && error.response?.status === 401).toBe(true);
         }
