@@ -73,8 +73,8 @@
 <script setup lang="ts">
 import validator from 'validator';
 
-import rules from '@/components/form/validation/rules';
-import { Validation } from '@/components/form/validation/types';
+import rules from '@/assets/form/validation/rules';
+import { Validation } from '@/assets/form/validation/types';
 
 const equalsPasswords: Validation = [
     (str: string, formState) => validator.equals(

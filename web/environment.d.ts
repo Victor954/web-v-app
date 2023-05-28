@@ -4,7 +4,7 @@ declare module 'vue-router' {
   }
 }
 
-import { AssertComponents } from '@/components/types'
+import { AssertComponents } from '@/assets/types'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents extends AssertComponents {};

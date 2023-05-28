@@ -1,0 +1,38 @@
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+
+$menu_list_bg: $gray-800;
+$menu_list_hover_bg: $gray-600;
+$menu_list_color: $gray-200;
+
+$menu_list_active_bg: $yellow-200;
+$menu_list_active_hover_bg: $yellow-300;
+$menu_list_icon_color: $yellow-300;
+
+$menu_list_nested_bg: $gray-900;
+$menu_list_nested_expend_bg: $gray-700;
+
+@mixin menu_item() {
+    list-style-type: none;
+    padding: 1rem;
+    transition: background-color .2s;
+    border-bottom: solid 1px $gray-700;
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    &.active {
+        background-color: $menu_list_active_bg;
+
+        &:hover {
+            background-color: $menu_list_active_hover_bg;
+        }
+    }
+
+    &:hover {
+        background-color: $menu_list_hover_bg;
+        cursor: pointer;
+    }
+}

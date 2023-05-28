@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { bookTypeSchema } from '@/scripts/joi/schemas/book.schemas';
-import bodyValidate from '@/middleware/bodyValidate.middleware';
+import { bodyValidate } from '@/middleware/validations.middleware';
 
 import * as bookTypesService from '@/services/bookTypes.service';
 import auth from '@/middleware/authorize.middleware';

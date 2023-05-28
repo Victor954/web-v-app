@@ -1,2 +1,1 @@
-export {default as queryStoreFactory} from './queryStoreFactory';
-export {default as mapQueryResult} from './mapQueryResult';
+export {default as useQuery} from './useQuery';

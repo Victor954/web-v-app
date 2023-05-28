@@ -1,0 +1,56 @@
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+
+div.table-striped {
+    .tbody>.tr:nth-of-type(odd)>* {
+        --bs-table-accent-bg: #{$table-striped-bg};
+        color: $table-striped-color;
+    }
+}
+
+div.table-hover {
+    .tbody>.tr:hover>* {
+        --bs-table-accent-bg: #{$table-hover-bg};
+        color: $table-hover-color;
+    }
+}
+
+div.table {
+    display: table;
+
+    .tfooter,
+    .tbody,
+    .tr,
+    .td,
+    .th {
+        border-color: inherit;
+        border-style: solid;
+
+    }
+
+    .tbody {
+        display: table-row-group;
+    }
+
+    .tfooter {
+        display: table-footer-group;
+    }
+
+    .tr:not(div.table .tr:last-of-type) {
+        border-bottom-width: 0px;
+    }
+
+    .tr {
+        display: flex;
+
+        .td {
+            display: flex;
+            align-items: center;
+        }
+
+        .td:not(div.table .tr .td:last-of-type) {
+            border-right-width: 0px;
+        }
+
+    }
+}

@@ -1,0 +1,24 @@
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+
+@each $color,
+$value in $theme-colors {
+    .btn-inline-#{$color} {
+        color: tint-color($value, $btn-hover-bg-tint-amount);
+        display: flex;
+        padding: .3rem;
+        border: none;
+
+        &:disabled {
+            opacity: .4;
+        }
+
+        &:hover {
+            color: $value
+        }
+
+        &:active {
+            color: tint-color($value, $btn-active-bg-tint-amount);
+        }
+    }
+}

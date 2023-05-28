@@ -1,5 +1,5 @@
 import { tokensSchema } from '@/scripts/joi/schemas/tokens.schemas';
-import bodyValidate from '@/middleware/bodyValidate.middleware';
+import { bodyValidate } from '@/middleware/validations.middleware';
 import { Router } from 'express';
 
 import auth from '@/middleware/authorize.middleware';

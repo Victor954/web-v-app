@@ -1,32 +1,51 @@
-import { Plugin } from "vue";
+import { App, Plugin } from "vue";
 import { useAuthorizeStore } from "../store/authorizeStore";
-import { Router } from "vue-router";
+import { RouteLocationNormalizedLoaded, Router } from "vue-router";
 
 /**
  * Плагин работы с авторизацией 
  */
-export default function (router: Router): Plugin{
+export default function (): Plugin{
     return {
-        install: () => {
-    
+        install: (app: App<Element>) => {
+            
             const authorizeStore = useAuthorizeStore();
-    
             authorizeStore.recoveryCachedUser();
+
+            const options: KickOutOptions = {
+                app,
+                authorizeStore
+            };
     
-            registerOutUser(router , authorizeStore);
-            protectRoutes(router);
+            registerKickOutUser(options);
+            protectRoutes(options);
         }
     }
 };
 
 
+type KickOutOptions =  {
+    app: App<Element>
+    authorizeStore: ReturnType<typeof useAuthorizeStore>
+}
+
 /**
 * При обновления стора authorize/user смотрим пользователя и если тот null - выкидываем пользователя
 */
-function registerOutUser(router: Router , authorizeStore: ReturnType<typeof useAuthorizeStore>) {
+function registerKickOutUser({ app , authorizeStore } : KickOutOptions) {
+
+
+    const router = app.config.globalProperties.$router;
+
     authorizeStore.$subscribe((mutation , state) => {
-        if(mutation.storeId === 'authorize' && state.query.data === null) {
-            router.push('/login');
+
+        const route = app.config.globalProperties.$route;
+
+        if(mutation.storeId === 'authorize' && !state.tokens.data) {
+
+            if(!route.meta.loginRoute) {
+                router.push('/login');
+            }
         }
     });
 }
@@ -34,11 +53,13 @@ function registerOutUser(router: Router , authorizeStore: ReturnType<typeof useA
 /**
 * Защита роутов
 */
-function protectRoutes(router: Router) {
+function protectRoutes(options: KickOutOptions) {
+
+    const router = options.app.config.globalProperties.$router;
 
     router.beforeEach((to , from , next) => {
 
-        const { user } = useAuthorizeStore();
+        const user = options.authorizeStore.user;
 
         const isPrivate = to.meta?.private;
         const roles = to.meta?.roles as string[] | undefined; 

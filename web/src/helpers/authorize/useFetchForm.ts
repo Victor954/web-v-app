@@ -3,9 +3,8 @@ import { storeToRefs } from 'pinia';
 import _ from 'lodash';
 
 import { useAuthorizeStore } from '@/store/authorizeStore';
-import { LoginReq } from '@/types/request/authorize.req.types';
 import { useRouter } from 'vue-router';
-import { FromRef } from '@/components/form/types';
+import { FromRef } from '@/assets/form/types';
 import { AxiosError } from 'axios';
 import { ErrorResponse } from '@/types/response/error.res.types';
 import { LoadError } from '@/types/store/asyncState.types';
@@ -17,22 +16,19 @@ type Options<TFormModel> = {
 
 export default function<TFormModel> (options: Options<TFormModel>) {
     const authStore = useAuthorizeStore();
-    const { query } = storeToRefs(authStore);
-
     const router = useRouter();
     
     const formRef = ref<FromRef>();
     const disabledForm = ref<boolean>(false);
     
-    const queryState = computed(() => query?.value?.state);
-    const queryError = computed(() => query.value.error);
+    const queryError = computed(() => authStore.tokens.error);
     
     watchEffect(() => {
-        if (queryState.value === 'fulfilled') {
+        if (authStore.tokens?.isSuccess) {
             router.push(options.successRedirect);
         }
     
-        if (queryState.value === 'rejected' && queryError.value) {
+        if (authStore.tokens.isError && queryError.value) {
             setFailedFetchError(queryError.value);
         }
     })

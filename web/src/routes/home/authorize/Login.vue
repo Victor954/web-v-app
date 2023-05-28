@@ -33,7 +33,7 @@
     </article>
 </template>
 <script setup lang="ts">
-import rules from '@/components/form/validation/rules';
+import rules from '@/assets/form/validation/rules';
 
 import { useFetchForm } from '@/helpers/authorize';
 import { LoginReq } from '@/types/request/authorize.req.types';

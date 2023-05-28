@@ -30,6 +30,10 @@ export default class Api {
 
         return this.instance.request<TResponse>(this.toAxiosConfig(config));
     }
+
+    get<TResponse extends any>(url: string, config?: AxiosRequestConfig<any> | undefined) {
+        return this.instance.get<TResponse>(url , config);
+    }
     
     private registerMiddleware() {
         apiAuthorizeMiddleware(this.instance);

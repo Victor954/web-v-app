@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 
-import './style.css';
+import './style.scss';
 
 import App from './App.vue'
 import { 
@@ -14,7 +14,7 @@ const app = createApp(App);
 
 const store = createPinia();
 const router = createRouter();
-const authorize = createAuthorize(router);
+const authorize = createAuthorize();
 const assertsUI = createAssertsUI();
 
 [

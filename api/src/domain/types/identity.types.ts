@@ -14,6 +14,14 @@ export type User = {
     rolesArrayLength?: number;
 }
 
+export type UserInfo = {
+    id: string ,
+    login: string;
+    personInfo: PersonInfo;
+    roles: Role[];
+}
+
+
 export type Role = {
     code: string;
     name: string;

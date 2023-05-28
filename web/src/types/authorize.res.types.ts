@@ -14,3 +14,7 @@ export type User = {
     personInfo: PersonInfo;
     roles?: string[];
 }
+
+export type UserInfo = {
+    id: string
+} & User;
