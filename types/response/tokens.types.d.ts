@@ -1,5 +1,4 @@
-export type RefreshToken = {
+export type TokensResDTO = {
     refreshToken: string;
     accessToken: string;
-    login: string;
 }

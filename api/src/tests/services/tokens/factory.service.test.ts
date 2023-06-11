@@ -1,11 +1,11 @@
-import { TokenClaims } from '@/domain/types/tokens.types';
+import { TokenClaimsDTO } from 'ts-domain-types/server.types';
 import * as factoryService from '@/services/tokens/factory.service';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
 
-type Token = jwt.JwtPayload & TokenClaims;
+type Token = jwt.JwtPayload & TokenClaimsDTO;
 
-const claims: TokenClaims = {login: 'user' , roles: ['admin']};
+const claims: TokenClaimsDTO = {login: 'user' , roles: ['admin']};
 
 describe('testing tokens factory service' , () => {
 

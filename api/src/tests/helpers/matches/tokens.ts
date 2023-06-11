@@ -1,7 +1,7 @@
-import { Tokens } from '@/domain/types/response/tokens.types';
+import { RefreshTokenReqDto } from 'ts-domain-types/request/tokens.types';
 import { verifyAccessToken, verifyRefreshToken } from '@/services/tokens/verify.service';
 
-export function toBeValidTokens(received: Tokens , toBeLogin: string) {
+export function toBeValidTokens(received: RefreshTokenReqDto , toBeLogin: string) {
 
 	const verAccessToken = verifyAccessToken(received.accessToken);
 	const verRefreshToken = verifyRefreshToken(received.refreshToken);

@@ -1,0 +1,1 @@
+export type MongoRes<T extends object> = { _id: string } & T;

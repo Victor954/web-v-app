@@ -1,8 +1,8 @@
 import { Schema , model } from 'mongoose';
-import { User } from '@/domain/types/identity.types';
+import { UserModelDTO } from '@/domain/types/models/user.types';
 import PersonInfoSchema from '../../schemas/PersonInfoSchema';
 
-const UserSchema = new Schema<User>({
+const UserSchema = new Schema<UserModelDTO>({
 	login: {
 		type: String,
 		required: true,
@@ -45,7 +45,7 @@ UserSchema.pre('save' , function (next) {
 	}
 });
 
-UserSchema.pre('insertMany' , function (next , docs: User[]) {
+UserSchema.pre('insertMany' , function (next , docs: UserModelDTO[]) {
 	try {
 		docs.forEach(doc => {
 			doc.rolesArrayLength = doc.roles?.length || 0;

@@ -1,9 +1,9 @@
 import express from 'express';
 import passport from 'passport';
-import errorMiddleware from './middleware/error.middleware';
+import errorMiddleware from '../middleware/error.middleware';
 
-import routes from './routes';
-import bearerStrategy from './middleware/bearerStrategy.middleware';
+import routes from '../routes';
+import bearerStrategy from '../middleware/bearerStrategy.middleware';
 
 /**
  * генератор сервера для тестовой среды

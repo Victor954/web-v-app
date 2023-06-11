@@ -1,7 +1,6 @@
 import { api } from "@/api";
 import { ApiConfig } from "@/api/Api";
-import { ErrorResponse } from "@/types/response/error.res.types";
-import { LoadError, LoadState } from "@/types/store/asyncState.types";
+import { LoadError, LoadState } from "@/types/store/async.types";
 import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { defineStore } from "pinia";
 import { UnwrapRef, computed, ref } from "vue";
@@ -36,7 +35,7 @@ export default function useQuery<TResponse>(name: string , options?: Options<TRe
             return response;
         } catch (err) {
 
-            if(err instanceof AxiosError<ErrorResponse>) {
+            if(err instanceof AxiosError) {
                 error.value = err;
             }
 
@@ -67,7 +66,7 @@ export default function useQuery<TResponse>(name: string , options?: Options<TRe
             return response;
         } catch (err) {
 
-            if(err instanceof AxiosError<ErrorResponse>) {
+            if(err instanceof AxiosError) {
                 error.value = err;
             }
 

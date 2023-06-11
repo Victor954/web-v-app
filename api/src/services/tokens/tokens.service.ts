@@ -1,11 +1,12 @@
 
 import ServerError from '@/domain/errors/ServerError';
-import { Tokens } from '@/domain/types/response/tokens.types';
+import { TokensResDTO } from 'ts-domain-types/response/tokens.types';
+import { RefreshTokenReqDto } from 'ts-domain-types/request/tokens.types';
 import jwt ,{ TokenExpiredError , JwtPayload}  from 'jsonwebtoken';
 import { generateTokens } from './factory.service';
 import { verifyAccessToken, verifyRefreshToken} from './verify.service';
 import UserModel from '@/scripts/mongo/models/identity/UserModel';
-import { TokenClaims } from '@/domain/types/tokens.types';
+import { TokenClaimsDTO } from 'ts-domain-types/server.types';
 
 const refreshError = new ServerError({
 	message: 'token is invalid',
@@ -13,9 +14,9 @@ const refreshError = new ServerError({
 	statusCode: 400
 });
 
-export async function refreshTokenAsync({ accessToken , refreshToken }: Tokens): Promise<Tokens> {
+export async function refreshTokenAsync({ accessToken , refreshToken }: RefreshTokenReqDto): Promise<TokensResDTO> {
 
-	const claims = jwt.decode(accessToken) as JwtPayload & TokenClaims;
+	const claims = jwt.decode(accessToken) as JwtPayload & TokenClaimsDTO;
 	const user = await UserModel.findOne({ login: claims.login });
 
 	if(!user) throw refreshError;

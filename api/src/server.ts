@@ -9,10 +9,7 @@ import errorMiddleware from './middleware/error.middleware';
 import routes from './routes';
 import bearerStrategy from './middleware/bearerStrategy.middleware';
 
-/**
- * генератор сервера для дев среды
- * @returns Express
- */
+
 export default function createExpress() {
 	const app = express();
 

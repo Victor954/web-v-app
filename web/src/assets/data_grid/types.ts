@@ -27,8 +27,8 @@ export type PaginationDto = {
 }
 
 export type LoadDataEvent = {
-    skip: number;
-    top: number;
+    offset: number;
+    limit: number;
 }
 
 export type DataGridManager = {

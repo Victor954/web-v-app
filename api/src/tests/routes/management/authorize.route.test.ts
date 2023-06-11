@@ -1,11 +1,11 @@
-import { User } from '@/domain/types/identity.types';
+import { UserModelDTO } from '@/domain/types/models/user.types';
 import UserModel from '@/scripts/mongo/models/identity/UserModel';
 import { useFakeMongo  } from '@/tests/helpers/hooks';
 import { makePostRequestAsync } from '@/tests/helpers/requestExpress';
 
 import * as encodePassword from '@/services/encode/encodePassword.service';
 import * as factoryTokens from '@/services/tokens/factory.service';
-import { Login } from '@/domain/types/request/authorize.types';
+import { LoginReqDTO } from 'ts-domain-types/request/authorize.types';
 
 useFakeMongo();
 
@@ -26,7 +26,7 @@ describe('testing /api/v1/management/authorize/login' , () => {
 	};
 
 	beforeAll(async () => {
-		const users:User[] = [
+		const users:UserModelDTO[] = [
 			{
 				login: 'User',
 				personInfo: {
@@ -97,7 +97,7 @@ describe('testing /api/v1/management/authorize/login' , () => {
 		await expect(response.body).toEqual(authorizeError);
 	});
 
-	async function makeLoginRequest(login: Login) {
+	async function makeLoginRequest(login: LoginReqDTO) {
 		spyEncode.mockReturnValue(Promise.resolve(login.password));
 	
 		return await makePostRequestAsync({

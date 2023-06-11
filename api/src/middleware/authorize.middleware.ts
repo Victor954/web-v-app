@@ -2,12 +2,6 @@ import AuthorizeError from '@/domain/errors/AuthorizeError';
 import { Handler} from 'express';
 import passport from 'passport';
 
-function authenticate() {
-	return passport.authenticate('bearer' , { 
-		session: false
-	});
-}
-
 function inRoles(accessRoles: string[] = []) {
 	const handle: Handler = (req , res , next) => {
 
@@ -24,7 +18,13 @@ function inRoles(accessRoles: string[] = []) {
 	return handle;
 }
 
-export default {
-	authenticate,
-	inRoles
-};
+function authenticate(accessRoles: string[] = []) {
+	return [
+		passport.authenticate('bearer' , { 
+			session: false,
+		}),
+		inRoles(accessRoles)
+	];
+}
+
+export default authenticate;

@@ -1,7 +1,7 @@
 import { Schema , model } from 'mongoose';
-import { Role } from '@/domain/types/identity.types';
+import { RoleModelDTO } from '@/domain/types/models/roles.types';
 
-const RoleSchema = new Schema<Role>({
+const RoleSchema = new Schema<RoleModelDTO>({
 	code: {
 		type: String,
 		required: true,

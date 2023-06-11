@@ -2,7 +2,7 @@ import { tokensSchema } from '@/scripts/joi/schemas/tokens.schemas';
 import { bodyValidate } from '@/middleware/validations.middleware';
 import { Router } from 'express';
 
-import auth from '@/middleware/authorize.middleware';
+import authenticate from '@/middleware/authorize.middleware';
 
 import * as tokensService from '@/services/tokens/tokens.service';
 
@@ -20,7 +20,7 @@ router.post('/tokens/refresh' , bodyValidate(tokensSchema) , async (req , res , 
 });
 
 router.route('/tokens/divide')
-	.post(auth.authenticate(), async (req , res, next) => {
+	.post(...authenticate(), async (req , res, next) => {
 		try {
 			await tokensService.divideTokenAsync(req.body.refreshToken , req.user?.login);
 			res.status(200).send('divided');

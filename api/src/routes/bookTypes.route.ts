@@ -3,12 +3,12 @@ import { bookTypeSchema } from '@/scripts/joi/schemas/book.schemas';
 import { bodyValidate } from '@/middleware/validations.middleware';
 
 import * as bookTypesService from '@/services/bookTypes.service';
-import auth from '@/middleware/authorize.middleware';
+import authenticate from '@/middleware/authorize.middleware';
 
 const router = Router();
 
 router.route('/books/types/:code')
-	.get(auth.authenticate() , auth.inRoles(), async (req, res , next) => {
+	.get(...authenticate(), async (req, res , next) => {
 		try {
 			const response = await bookTypesService.findOneAsync(req.params.code);
 			res.json(response);

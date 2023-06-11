@@ -1,14 +1,20 @@
 import request from 'supertest';
 import qs from 'qs';
 
-type Options<T extends object> = {
+type OptionsPost<T extends object> = {
 	body: T, 
 	url: string,
     bearerToken?: string
 	contentType: 'application/json' | 'application/x-www-form-urlencoded'
 }
 
-export async function makePostRequestAsync<T extends object>(options: Options<T>) {
+type OptionsGet = {
+	url: string,
+	params?: URLSearchParams,
+    bearerToken?: string
+}
+
+export async function makePostRequestAsync<T extends object>(options: OptionsPost<T>) {
 
 	const adapter = request(global.app)
 		.post(options.url)
@@ -31,4 +37,19 @@ export async function makePostRequestAsync<T extends object>(options: Options<T>
 	}
 
 	throw Error(`unexpected contentType of options.contentType ${options.contentType}`);
+}
+
+export async function makeGetRequestAsync(options: OptionsGet) {
+	
+	let url = options.url;
+
+	if(options.params) {
+		url = `${url}/?${options.params.toString()}`;
+	}
+
+	const adapter = request(global.app)
+		.get(url)
+		.set('Accept', 'application/json');
+
+	return await adapter.send();
 }

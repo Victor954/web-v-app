@@ -30,7 +30,7 @@ export default function apiAuthorizeMiddleware(instance: Axios) {
     
                     if(refreshed.data && error.config) {
                         error.config.headers.Authorization = `Bearer ${refreshed.data.accessToken}`;
-                        instance.request(error.config);
+                        return await instance.request(error.config);
                     } else {
                         authorizeStore.resetUser();
                     }

@@ -1,10 +1,10 @@
-import { TokenClaims } from '@/domain/types/tokens.types';
+import { TokenClaimsDTO } from 'ts-domain-types/server.types';
 import * as verifyService from '@/services/tokens/verify.service';
 import jwt from 'jsonwebtoken';
 
-type Token = jwt.JwtPayload & TokenClaims;
+type Token = jwt.JwtPayload & TokenClaimsDTO;
 
-const claims: TokenClaims = {login: 'user' , roles: ['admin']};
+const claims: TokenClaimsDTO = {login: 'user' , roles: ['admin']};
 
 const expectToken: Token =  {
 	login: claims.login,

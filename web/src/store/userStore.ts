@@ -1,12 +1,12 @@
 import { useQuery } from "@/helpers/store";
-import { User } from "@/types/authorize.res.types";
-import { Pagination } from "@/types/response/pagination.res.types";
+import { UserRolesResDTO } from 'ts-domain-types/response/user.types'
+import { PaginationResDTO } from 'ts-domain-types/response/pagination.types'
 import { defineStore } from "pinia";
 
 export const useUserStore = defineStore('users' , () => {
-    const usersQuery = useQuery<Pagination<User>>('usersQuery');
+    const usersQuery = useQuery<PaginationResDTO<UserRolesResDTO>>('usersQuery');
 
-    async function loadUsersAsync(params : {skip:number , top: number}) {
+    async function loadUsersAsync(params : {offset:number , limit: number}) {
         await usersQuery.get('/users' , { params });
     }
 

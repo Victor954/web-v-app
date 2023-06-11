@@ -1,7 +1,7 @@
 import Joi from 'joi';
-import { Login , Register } from '@/domain/types/request/authorize.types';
+import { LoginReqDTO , RegisterReqDTO } from 'ts-domain-types/request/authorize.types';
 
-export const loginSchema = Joi.object<Login>({
+export const loginSchema = Joi.object<LoginReqDTO>({
 	login : Joi.string()
 		.alphanum()
 		.min(3)
@@ -21,7 +21,7 @@ export const loginParamsSchema = Joi.object<{ type: string }>({
 		.required()
 });
 
-export const registerSchema = Joi.object<Register>({
+export const registerSchema = Joi.object<RegisterReqDTO>({
 	login: Joi.string()
 		.alphanum()
 		.min(3)

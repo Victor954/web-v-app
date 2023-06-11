@@ -2,20 +2,21 @@ import { computed} from 'vue';
 import { defineStore } from 'pinia'; 
 import jwtDecode from "jwt-decode";
 
-import { Tokens, User } from '../types/authorize.res.types';
-import { LoginReq, RegisterReq } from '@/types/request/authorize.req.types';
+import { TokensResDTO } from 'ts-domain-types/response/tokens.types';
+import { TokenClaimsDTO } from 'ts-domain-types/server.types';
+import { LoginReqDTO , RegisterReqDTO } from 'ts-domain-types/request/authorize.types';
 import { useQuery } from "@/helpers/store";
 
 export const useAuthorizeStore = defineStore('authorize', () => {
-    const tokensQuery = useQuery<Tokens>('tokensQuery' , {
+    const tokensQuery = useQuery<TokensResDTO>('tokensQuery' , {
         mutate: mutateTokensHandler
     });
     
     const accessToken = computed(() => tokensQuery.data?.accessToken);
     const refreshToken = computed(() => tokensQuery.data?.refreshToken);
-    const user = computed(() => accessToken.value ? jwtDecode(accessToken.value) as User : null);
+    const user = computed(() => accessToken.value ? jwtDecode(accessToken.value) as TokenClaimsDTO : null);
 
-    function mutateTokensHandler(state: {data?: Tokens}) {
+    function mutateTokensHandler(state: {data?: TokensResDTO}) {
         if(state.data) {
             localStorage.setItem('accessToken' , state.data.accessToken);
             localStorage.setItem('refreshToken' , state.data.refreshToken);    
@@ -37,7 +38,7 @@ export const useAuthorizeStore = defineStore('authorize', () => {
         }
     }
     
-    async function fetchLogin(loginData: LoginReq) {
+    async function fetchLogin(loginData: LoginReqDTO) {
 
         await tokensQuery.request({
             method: 'POST',
@@ -47,7 +48,7 @@ export const useAuthorizeStore = defineStore('authorize', () => {
         });
     }
 
-    async function fetchManagementLogin(loginData: LoginReq) {
+    async function fetchManagementLogin(loginData: LoginReqDTO) {
 
         await tokensQuery.request({
             method: 'POST',
@@ -57,7 +58,7 @@ export const useAuthorizeStore = defineStore('authorize', () => {
         });
     }
 
-    async function fetchRegister(registerData: RegisterReq) {
+    async function fetchRegister(registerData: RegisterReqDTO) {
 
         await tokensQuery.request({
             method: 'POST',
@@ -67,7 +68,7 @@ export const useAuthorizeStore = defineStore('authorize', () => {
         });
     }
 
-    async function fetchRefreshToken() : Promise<{ data: false | Tokens }> {
+    async function fetchRefreshToken() : Promise<{ data: false | TokensResDTO }> {
         if(accessToken.value && refreshToken.value && user.value !== null) {
             
             const result = await tokensQuery.request({

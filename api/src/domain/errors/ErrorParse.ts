@@ -1,5 +1,7 @@
+import { ErrorResponse } from 'ts-domain-types/server.types';
+
 export interface ErrorParse {
-    toJSON: () => { code: string , message: string }
+    toJSON: () => ErrorResponse
 }
 
 export function isErrorParse(arg: any): arg is ErrorParse {

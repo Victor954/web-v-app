@@ -6,8 +6,8 @@ import { useAuthorizeStore } from '@/store/authorizeStore';
 import { useRouter } from 'vue-router';
 import { FromRef } from '@/assets/form/types';
 import { AxiosError } from 'axios';
-import { ErrorResponse } from '@/types/response/error.res.types';
-import { LoadError } from '@/types/store/asyncState.types';
+import { ErrorResponse } from 'ts-domain-types/server.types';
+import { LoadError } from '@/types/store/async.types';
 
 type Options<TFormModel> = {
     successRedirect: string,

@@ -1,7 +1,8 @@
 import { Schema } from 'mongoose';
-import { PersonInfo } from '@/domain/types/identity.types';
 
-const PersonInfoSchema = new Schema<PersonInfo>({
+import { PersonInfoModelDTO } from '@/domain/types/models/user.types';
+
+const PersonInfoSchema = new Schema<PersonInfoModelDTO>({
 	name: {
 		type: String,
 		required: true

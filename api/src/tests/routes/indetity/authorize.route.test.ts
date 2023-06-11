@@ -1,11 +1,11 @@
-import { User } from '@/domain/types/identity.types';
+import { UserModelDTO } from '@/domain/types/models/user.types';
 import UserModel from '@/scripts/mongo/models/identity/UserModel';
 import mongo from '@/scripts/mongo';
 import { makePostRequestAsync } from '@/tests/helpers/requestExpress';
 
 import * as encodePassword from '@/services/encode/encodePassword.service';
 import * as factoryTokens from '@/services/tokens/factory.service';
-import { Login, Register } from '@/domain/types/request/authorize.types';
+import { LoginReqDTO , RegisterReqDTO } from 'ts-domain-types/request/authorize.types';
 
 const spyEncode = jest.spyOn(encodePassword , 'encodeAsync');
 const spyFactoryTokens = jest.spyOn(factoryTokens , 'generateTokens');
@@ -19,7 +19,7 @@ beforeAll(async () => {
 
 	await mongo.connectAsync();
 
-	const users:User[] = [
+	const users:UserModelDTO[] = [
 		{
 			login: 'User',
 			personInfo: {
@@ -110,7 +110,7 @@ describe('testing /api/v1/authorize/login' , () => {
 		await expect(response.body).toEqual(tokens);
 	});
 
-	async function makeLoginRequest(login: Login) {
+	async function makeLoginRequest(login: LoginReqDTO) {
 		spyEncode.mockReturnValue(Promise.resolve(login.password));
 	
 		return await makePostRequestAsync({
@@ -139,7 +139,7 @@ describe('testing /api/v1/authorize/register' , () => {
 	});
 
 	test('testing register new user' , async () => {
-		const register:Register = {
+		const register:RegisterReqDTO = {
 			login: 'LoginUser1',
 			name: 'Иван',
 			surname: 'Иванов',
@@ -180,7 +180,7 @@ describe('testing /api/v1/authorize/register' , () => {
 
 	test('testing register new user with roles' , async () => {
 
-		const register:Register = { 
+		const register:RegisterReqDTO = { 
 			login: 'userWithRoles', 
 			name: 'Иван',
 			surname: 'Иванов',
@@ -221,7 +221,7 @@ describe('testing /api/v1/authorize/register' , () => {
 
 	test('testing with exist login' , async () => {
         
-		const register:Register = { 
+		const register:RegisterReqDTO = { 
 			login: 'User',
 			name: 'Иван',
 			surname: 'Иванов',
@@ -246,7 +246,7 @@ describe('testing /api/v1/authorize/register' , () => {
 
 	test('testing with not equals password and repeatedPassword' , async () => {
         
-		const register:Register = { 
+		const register:RegisterReqDTO = { 
 			login: 'NewUser2' ,
 			name: 'Иван',
 			surname: 'Иванов',

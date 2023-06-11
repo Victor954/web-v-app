@@ -1,6 +1,6 @@
 import mongo from '@/scripts/mongo';
 import UserModel from '@/scripts/mongo/models/identity/UserModel';
-import { User } from '@/domain/types/identity.types';
+import { UserModelDTO } from '@/domain/types/models/user.types';
 import { generateAccessToken , generateRefreshToken } from '@/tests/helpers/tokensFactory';
 import { makePostRequestAsync } from '@/tests/helpers/requestExpress';
 
@@ -19,7 +19,7 @@ const refreshToken = generateRefreshToken({
 	} 
 });
 
-const user:User = { 
+const user:UserModelDTO = { 
 	login: 'userTokens', 
 	personInfo: {
 		name: 'Иван',

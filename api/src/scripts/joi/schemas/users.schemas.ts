@@ -1,14 +1,12 @@
-import { UserQuery } from '@/domain/types/request/user.types';
+import { UsersReqDTO } from 'ts-domain-types/request/user.types';
 import Joi from 'joi';
 
-export const usersReqSchema = Joi.object<UserQuery>({
-	skip : Joi.number()
+export const usersReqSchema = Joi.object<UsersReqDTO>({
+	limit : Joi.number()
 		.integer()
-		.greater(-1)
-		.required(),
+		.greater(-1),
 
-	top: Joi.number()
+	offset: Joi.number()
 		.integer()
 		.greater(-1)
-		.required()
 });

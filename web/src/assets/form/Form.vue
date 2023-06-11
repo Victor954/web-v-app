@@ -4,7 +4,7 @@
     </form>
 </template>
 <script setup lang="ts">
-import { reactive, provide, readonly, onBeforeMount, onUnmounted } from 'vue';
+import { reactive, provide, readonly, onBeforeMount, onUnmounted, toRaw } from 'vue';
 import { FormStateModel, FormValidationModel, FormControl, FromRef } from './types';
 import EventBus from '@/helpers/EventBus';
 
@@ -61,10 +61,10 @@ function submit() {
             formStateModel[name] = 'sended';
         });
 
-        const fm = { ...fromModel }
+        const rawFromModel = toRaw(fromModel);
 
-        emits('submit-form', fm);
-        return fm;
+        emits('submit-form', rawFromModel);
+        return rawFromModel;
     }
 
     return false;

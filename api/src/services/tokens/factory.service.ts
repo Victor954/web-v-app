@@ -1,8 +1,9 @@
-import { Tokens } from '@/domain/types/response/tokens.types';
-import { TokenClaims } from '@/domain/types/tokens.types';
+import { RefreshTokenReqDto } from 'ts-domain-types/request/tokens.types';
+import { TokenClaimsDTO } from 'ts-domain-types/server.types';
+
 import jwt from 'jsonwebtoken';
 
-export function generateAccessToken({ login , roles , personInfo } : TokenClaims) {
+export function generateAccessToken({ login , roles , personInfo } : TokenClaimsDTO) {
 	return jwt.sign(
 		{ login , roles , personInfo} , 
 		process.env.ACCESS_SECRET_KEY, 
@@ -10,7 +11,7 @@ export function generateAccessToken({ login , roles , personInfo } : TokenClaims
 	);
 }
 
-export function generateRefreshToken({ login , roles } : TokenClaims) {
+export function generateRefreshToken({ login , roles } : TokenClaimsDTO) {
 	return jwt.sign(
 		{ login , roles } , 
 		process.env.REFRESH_SECRET_KEY, 
@@ -18,7 +19,7 @@ export function generateRefreshToken({ login , roles } : TokenClaims) {
 	);
 }
 
-export function generateTokens({ login , roles , personInfo} : TokenClaims): Tokens {
+export function generateTokens({ login , roles , personInfo} : TokenClaimsDTO): RefreshTokenReqDto {
 	const accessToken = generateAccessToken({ login , roles , personInfo });
 	const refreshToken = generateRefreshToken({ login , roles , personInfo });
 

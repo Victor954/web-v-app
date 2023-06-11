@@ -1,4 +1,4 @@
-export type Pagination<T> = {
+export type PaginationResDTO<T> = {
     entities: T[],
     totalCount: number
 }

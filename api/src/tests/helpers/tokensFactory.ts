@@ -1,8 +1,8 @@
-import { TokenClaims } from '@/domain/types/tokens.types';
+import { TokenClaimsDTO } from 'ts-domain-types/server.types';
 import jwt from 'jsonwebtoken';
 
 type Options = {
-    claims: TokenClaims;
+    claims: TokenClaimsDTO;
     key?: string;
     options?:  jwt.SignOptions & { key?: string }
 }

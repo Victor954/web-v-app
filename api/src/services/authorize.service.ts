@@ -1,7 +1,9 @@
 import ServerError from '@/domain/errors/ServerError';
-import { User } from '@/domain/types/identity.types';
-import { Login, Register } from '@/domain/types/request/authorize.types';
-import { Tokens } from '@/domain/types/response/tokens.types';
+import { UserModelDTO } from '@/domain/types/models/user.types';
+
+import { LoginReqDTO , RegisterReqDTO} from 'ts-domain-types/request/authorize.types';
+import { TokensResDTO } from 'ts-domain-types/response/tokens.types';
+
 import { encodeAsync , generateSalt} from './encode/encodePassword.service';
 import { generateTokens } from './tokens/factory.service';
 import UserModel from '@/scripts/mongo/models/identity/UserModel';
@@ -17,7 +19,7 @@ type LoginOptions = {
 	withRolesOnly?: boolean
 }
 
-export async function loginAsync({ login , password }: Login , options?: LoginOptions): Promise<Tokens> {
+export async function loginAsync({ login , password }: LoginReqDTO , options?: LoginOptions): Promise<TokensResDTO> {
     
 	const user = await UserModel.findOne(queryLoginFilter({login , ...options}));
 
@@ -45,7 +47,7 @@ export async function registerAsync({
 	patronymic,
 	password,
 	roles
-}: Register): Promise<Tokens> {
+}: RegisterReqDTO): Promise<TokensResDTO> {
     
 	const sameLoginUsersCount = await UserModel.count({ login });
 
@@ -66,7 +68,7 @@ export async function registerAsync({
 
 	const tokens = generateTokens({ login , roles , personInfo });
 
-	const user:User = {
+	const user:UserModelDTO = {
 		login,
 		personInfo,
 		refreshToken: tokens.refreshToken,

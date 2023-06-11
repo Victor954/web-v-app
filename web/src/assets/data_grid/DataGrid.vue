@@ -10,7 +10,7 @@
             </THead>
         </Table>
         <Scrollbar style="height: 300px">
-            <div :class="[tableClass, 'table-hover']" style="height: 300px">
+            <div :class="[tableClass, 'table-hover', 'border-end border-start']" style="height: 300px">
                 <div class="tbody">
                     <DataGridRow v-if="$props.rows.length > 0" v-for="row in $props.rows" :data="row.data"
                         :index="row.index" :state="getRowState(row.index)" :mapDefaultValues="$props.mapDefaultValues!"
@@ -24,8 +24,7 @@
                             <slot name="form" :data="row.data" :styles="rowStyles"></slot>
                         </template>
                     </DataGridRow>
-                    <div class="h-100 text-secondary fs-5 d-flex justify-content-center align-items-center border-end border-start"
-                        v-else>
+                    <div class="h-100 text-secondary fs-5 d-flex justify-content-center align-items-center" v-else>
                         Нет данных
                     </div>
                 </div>
@@ -163,8 +162,8 @@ function resetSelect() {
 }
 
 const createLoadData = (page: number): LoadDataEvent => ({
-    skip: itemPageCount.value * page,
-    top: itemPageCount.value
+    offset: itemPageCount.value * page,
+    limit: itemPageCount.value
 });
 
 provide<DataGridManager>('dataGrid', {
