@@ -51,16 +51,18 @@
 import { computed } from 'vue';
 import _ from 'lodash';
 
-import { modelMapper } from '@/helpers/profiles/userProfile';
+import mapper from '@/helpers/profiles';
 import { useUserStore } from '@/store/userStore';
 import rules from '@/assets/form/validation/rules';
 
 import { LoadDataEvent } from '@/assets/data_grid/types';
-import { UserRolesModel } from '@/types/response/authorize.res.types';
+import { UserRolesResDTO } from 'ts-domain-types/response/user.types';
 import { FormModel, RolesFormArgs } from './types';
 
 import UserRoles from './UserRoles.vue';
 import UserPassword from './UserPassword.vue';
+import { createEmptyObject } from '@/helpers/utils';
+import { Nullable } from '@/types/mapTypes';
 
 const usersStore = useUserStore();
 
@@ -77,8 +79,16 @@ const columns = [
 const totalCount = computed(() => usersStore.user.data?.totalCount || 0);
 const rows = computed(() => usersStore.user.data?.entities.map((data, index) => ({ data, index })) || []);
 
-function mapDefaultValues(rowData: Record<string, any> | null): Record<string, any> {
-    return modelMapper(rowData as UserRolesModel);
+function mapDefaultValues(rowData: UserRolesResDTO | null): Record<string, any> {
+
+    const formData = rowData ?? createEmptyObject<UserRolesResDTO>([
+        'login',
+        'password',
+        'personInfo',
+        'roles'
+    ]);
+
+    return mapper.map<Nullable<UserRolesResDTO>, FormModel>(formData, 'UserResDto', 'UserFrom');
 }
 
 function loadDataHandler(loadData: LoadDataEvent) {

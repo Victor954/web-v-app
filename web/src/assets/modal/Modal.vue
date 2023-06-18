@@ -21,18 +21,30 @@
 <script setup lang="ts">
 
 import { Modal } from 'bootstrap';
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 import { ModalRef } from './types';
 import EventBus from '@/helpers/EventBus';
 
 const modalElementRef = ref<HTMLDivElement>()
 const modal = ref<Modal>();
+let hasResolved = true;
 
 const resolveEvent = new EventBus<any>();
 
-function resolve(arg: any) {
-    resolveEvent.trigger(arg);
+onMounted(() => {
+    document.addEventListener('hidden.bs.modal', hiddenModalHandler);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('hidden.bs.modal', hiddenModalHandler);
+});
+
+function hiddenModalHandler() {
+
+    if (!hasResolved) {
+        resolve(null);
+    }
 }
 
 async function show() {
@@ -42,23 +54,28 @@ async function show() {
     }
 
     modal.value?.show();
-
-    return await new Promise((resolve) => {
-        resolveEvent.on(handlerEventAsync(resolve));
-    });
-}
-
-function handlerEventAsync(resolve: (value: unknown) => void) {
-    const callback = (arg: any) => {
-        resolve(arg);
-        resolveEvent.off(callback);
-    }
-
-    return callback;
+    return await new Promise(lockForClientResolve);
 }
 
 function hide() {
     modal.value?.hide();
+}
+
+function lockForClientResolve(resolve: (value: unknown) => void) {
+
+    hasResolved = false;
+
+    const callback = (arg: any) => {
+        resolve(arg);
+        resolveEvent.off(callback);
+        hasResolved = true;
+    }
+
+    resolveEvent.on(callback);
+}
+
+function resolve(arg: any) {
+    resolveEvent.trigger(arg);
 }
 
 defineExpose<ModalRef>({

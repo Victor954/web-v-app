@@ -1,5 +1,5 @@
 export {default as Icon} from './Icon.vue';
-export {default as Button} from './Button.vue';
+export {default as Button} from './button/Button.vue';
 
 export {default as PageTitle} from './title/PageTitle.vue';
 
@@ -25,6 +25,7 @@ export {default as TFoot} from './table/TFoot.vue';
 
 export {default as DataGrid} from './data_grid/DataGrid.vue';
 export {default as Modal} from './modal/Modal.vue';
+export {default as PopoverContext} from './popover/PopoverContext.vue';
 
 export {default as Scrollbar} from './Scrollbar.vue';
 export {default as Label} from './Label.vue';

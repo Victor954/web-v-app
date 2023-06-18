@@ -6,6 +6,7 @@
 <script setup lang="ts">
 
 import { computed } from 'vue';
+
 type Props = {
     styleType: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' | 'link';
     outline?: boolean;
@@ -26,6 +27,7 @@ function getPrefix() {
 
     return '';
 }
+
 </script>
 <style lang="scss" scoped>
 @import '@/scss/buttons.scss';
